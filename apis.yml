@@ -1,0 +1,58 @@
+name: HostDeFi
+description: >-
+  Non-custodial, multi-chain DEX interface whose developer product is the HostDeFi Token Risk API — an A+-to-F token
+  safety scoring service across Solana and EVM chains. Exposes a keyless REST API, an x402 pay-per-call agent lane with
+  a live discovery manifest, and a hosted MCP server. Composes Jupiter, KyberSwap, and Chainflip for swaps and bridging.
+url: https://raw.githubusercontent.com/api-evangelist/hostdefi/refs/heads/main/apis.yml
+created: '2026-08-20'
+modified: '2026-08-20'
+specificationVersion: '0.21'
+tags:
+  - defi
+  - token-safety
+  - token-risk-scoring
+  - dex
+  - solana
+  - evm
+  - bridging
+  - mcp
+  - x402
+  - agent-native
+  - crypto
+  - on-chain-data
+  - non-custodial
+apis:
+  - name: HostDeFi Token Risk API
+    description: >-
+      Keyless/free-tier and SOL-key-authenticated REST API returning A+-to-F token safety verdicts for Solana and EVM
+      tokens, plus pre-graduation signals, radar, obituaries ledger, graded listings, and agent-executable EVM swap
+      quotes. Includes an x402 pay-per-call agent lane and a hosted MCP server.
+    humanURL: https://hostdefi.com/docs/api/
+    baseURL: https://hostdefi.com/api
+    tags:
+      - defi
+      - token-safety
+      - token-risk-scoring
+      - dex
+      - solana
+      - evm
+      - bridging
+      - mcp
+      - x402
+      - agent-native
+      - crypto
+      - on-chain-data
+      - non-custodial
+    properties:
+      - type: Documentation
+        url: https://hostdefi.com/docs/api/
+      - type: MCPServer
+        url: https://hostdefi.com/api/v1/mcp
+maintainers:
+  - FN: HostDeFi
+    url: https://hostdefi.com/
+generated:
+  by: apis.io/add
+  model: claude-opus-4-8
+  confidence: 90
+  at: '2026-08-20T23:39:01.162Z'
