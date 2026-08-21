@@ -1,0 +1,82 @@
+aid: hostdefi
+name: HostDeFi
+description: >-
+  HostDeFi is a non-custodial Solana token-risk service that scans a mint before a purchase —
+  mint and freeze authority state, liquidity depth and lock status, holder concentration,
+  dangerous Token-2022 extensions, sell simulation and contract flags. The public contract is an
+  OpenAPI 3.1 document of 26 operations served from hostdefi.com/api with API-key authentication.
+  HostDeFi also exposes an x402 machine-payment surface: an authority quick-check endpoint that
+  returns HTTP 402 with a signed payment challenge, priced in USDC and payable on either Solana
+  or Base, so an agent can buy a single check without an account.
+type: Index
+url: https://raw.githubusercontent.com/api-evangelist/hostdefi/refs/heads/main/apis.yml
+created: '2026-08-21'
+modified: '2026-08-21'
+specificationVersion: '0.23'
+tags:
+- Solana
+- Blockchain
+- Token Risk
+- Security
+- DeFi
+- x402
+- Agent Commerce
+- Crypto
+tags_raw:
+- solana
+- token risk
+- defi
+- rug pull
+- x402
+apis:
+- aid: hostdefi:hostdefi-token-risk-api
+  name: HostDeFi Token Risk API
+  description: >-
+    Token risk scanning for Solana mints — authority state, liquidity, holder concentration,
+    Token-2022 extension flags and sell simulation. 26 operations, API-key authentication.
+  humanURL: https://hostdefi.com/docs/api/
+  baseURL: https://hostdefi.com/api
+  tags:
+  - Solana
+  - Token Risk
+  - Security
+  properties:
+  - type: OpenAPI
+    url: openapi/hostdefi-token-risk-api-openapi.yml
+  - type: Documentation
+    url: https://hostdefi.com/docs/api/
+  - type: APIReference
+    url: https://hostdefi.com/api/v1/openapi.json
+  - type: FinOps
+    url: finops/hostdefi-x402-challenge.json
+common:
+- type: LLMsTxt
+  url: llms/hostdefi-llms.txt
+- type: Website
+  url: https://hostdefi.com
+- type: DeveloperPortal
+  url: https://hostdefi.com/docs/api/
+maintainers:
+- FN: HostDeFi
+  email: apisio@hostdefi.com
+  url: https://hostdefi.com
+x-provenance:
+  added: '2026-08-21'
+  method: searched
+  source: https://hostdefi.com/llms.txt
+  note: >-
+    Submitted via apis.io/add on 2026-08-20 (twice, as "HostDeFi" and "HostDeFi Token Risk API" —
+    one provider, two records at the gate). The submitted APIs.json URL,
+    https://hostdefi.com/apis.json, returns 404 against a control that also 404s, so the 404 is
+    real; that is a bad pointer in the submission, not an absent surface.
+    NO API-CATALOG IS RECORDED, DELIBERATELY. https://hostdefi.com/.well-known/api-catalog
+    returns HTTP 200, but the body is the site's HTML homepage, not a linkset. Recording it as an
+    APICatalog would hand HostDeFi credit for a discovery document it does not serve. The path
+    answering 200 is not the same as the artifact existing.
+    The x402 surface was verified live. GET /api/v1/x402/authority/solana/{mint} without a payment
+    header returns HTTP 402 with x402Version 1 and two `accepts` entries — USDC on Solana and on
+    Base, maxAmountRequired 5000, 60-second timeout, with a named feePayer. The saved challenge in
+    finops/ is that response verbatim. The REST API was probed at /api/v1/health and returned 200.
+    One thing for the provider rather than for us: the published contract lists a second server,
+    https://awake-integrity-production-faa0.up.railway.app, which also answers /v1/health with 200.
+    That looks like a staging backend reachable from a production specification.
