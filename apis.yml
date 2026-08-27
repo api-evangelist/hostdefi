@@ -32,8 +32,9 @@ tags_raw:
 apis:
 - aid: hostdefi:hostdefi-token-risk-api
   name: HostDeFi Token Risk API
-  description: Token risk scanning for Solana mints — authority state, liquidity, holder concentration,
-    Token-2022 extension flags and sell simulation. 26 operations, API-key authentication.
+  description: >-
+    Token risk scanning for Solana mints — authority state, liquidity, holder concentration, Token-2022
+    extension flags and sell simulation. 26 operations, API-key authentication.
   humanURL: https://hostdefi.com/docs/api/
   baseURL: https://hostdefi.com/api
   tags:
@@ -51,6 +52,69 @@ apis:
     url: finops/hostdefi-x402-challenge.json
   - type: MCPServer
     url: mcp/hostdefi-tools-list.json
+- aid: hostdefi:hostdefi-analyze-token-api
+  name: HostDeFi Analyze Token API
+  description: The Analyze Token API from HostDeFi — 1 operation(s) for analyze token.
+  humanURL: https://hostdefi.com/docs/api/
+  baseURL: https://hostdefi.com/api
+  tags:
+  - Analyze Token
+  properties:
+  - type: OpenAPI
+    url: openapi/hostdefi-analyze-token-api-openapi.yml
+- aid: hostdefi:hostdefi-health-api
+  name: HostDeFi Health API
+  description: The Health API from HostDeFi — 1 operation(s) for health.
+  humanURL: https://hostdefi.com/docs/api/
+  baseURL: https://hostdefi.com/api
+  tags:
+  - Health
+  properties:
+  - type: OpenAPI
+    url: openapi/hostdefi-health-api-openapi.yml
+- aid: hostdefi:hostdefi-keys-api
+  name: HostDeFi Keys API
+  description: The Keys API from HostDeFi — 1 operation(s) for keys.
+  humanURL: https://hostdefi.com/docs/api/
+  baseURL: https://hostdefi.com/api
+  tags:
+  - Keys
+  properties:
+  - type: OpenAPI
+    url: openapi/hostdefi-keys-api-openapi.yml
+- aid: hostdefi:hostdefi-scan-api
+  name: HostDeFi Scan API
+  description: The Scan API from HostDeFi — 1 operation(s) for scan.
+  humanURL: https://hostdefi.com/docs/api/
+  baseURL: https://hostdefi.com/api
+  tags:
+  - Scan
+  properties:
+  - type: OpenAPI
+    url: openapi/hostdefi-scan-api-openapi.yml
+- aid: hostdefi:hostdefi-usage-api
+  name: HostDeFi Usage API
+  description: The Usage API from HostDeFi — 1 operation(s) for usage.
+  humanURL: https://hostdefi.com/docs/api/
+  baseURL: https://hostdefi.com/api
+  tags:
+  - Usage
+  properties:
+  - type: OpenAPI
+    url: openapi/hostdefi-usage-api-openapi.yml
+- aid: hostdefi:hostdefi-x402-machine-payable-api
+  name: HostDeFi x402 (machine-payable) API
+  description: >-
+    Pay-per-call lane for AI agents (x402 protocol): no key, no account - pay USDC per request and get
+    the same A+-F Safety Read. Free tier and API-key plans are unchanged and remain the better per-call
+    price for steady use.
+  humanURL: https://hostdefi.com/docs/api/
+  baseURL: https://hostdefi.com/api
+  tags:
+  - x402 (machine-payable)
+  properties:
+  - type: OpenAPI
+    url: openapi/hostdefi-x402-machine-payable-api-openapi.yml
 common:
 - type: MCPServer
   url: mcp/hostdefi-tools-list.json
