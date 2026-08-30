@@ -1,0 +1,138 @@
+openapi: 3.2.0
+info:
+  title: HostDeFi Token Risk Keys API
+  version: 1.0.0
+  description: 'Public product surface of the scam-check-api service: the /v1 Token Risk API (same proprietary A+–F Safety Read rendered on the HostDeFi token pages, plus pre-graduation on-chain signals for Solana), key purchase/usage endpoints, and the free contract scanner at POST /analyze-token. Keyless callers get a per-IP fair-use tier of 100 calls/day on the verdict endpoints; paid API keys (bought with SOL via POST /v1/keys) raise the quota and unlock batch. Send an API key as the `x-api-key` header.'
+  contact:
+    url: https://hostdefi.com/docs/api/
+    email: trustdex.app@gmail.com
+servers:
+- url: https://hostdefi.com/api
+  description: 'Canonical branded base — /v1/* served via the hostdefi.com edge (use this in new integrations). Note: /analyze-token is exposed here as POST /api/scan.'
+- url: https://awake-integrity-production-faa0.up.railway.app
+  description: Origin host (Railway) — keeps working for existing integrations; all paths incl. /analyze-token.
+security:
+- {}
+- ApiKeyHeader: []
+tags:
+- name: Keys
+paths:
+  /v1/keys:
+    post:
+      summary: Buy an API key with a confirmed SOL payment
+      description: Verifies the payment signature on-chain (balance delta on the recipient wallet) and mints an API key for the chosen plan. A signature can be redeemed exactly once, for either a web pass or an API key.
+      operationId: postKeys
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - signature
+              - plan
+              properties:
+                signature:
+                  type: string
+                  description: Base58 Solana transaction signature of the payment (64–100 chars).
+                plan:
+                  type: string
+                  enum:
+                  - week
+                  - month
+                  - year
+                  description: week = Builder, month = Pro, year = Scale.
+                reference:
+                  type:
+                  - string
+                  - 'null'
+                  description: Optional base58 reference key that must appear on the transaction.
+      responses:
+        '200':
+          description: Key minted. The key is shown only once.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    const: true
+                  apiKey:
+                    type: string
+                    description: The new key (vx_ + 32 hex chars). Send it as the `x-api-key` header.
+                  plan:
+                    type: string
+                    enum:
+                    - week
+                    - month
+                    - year
+                  planName:
+                    type: string
+                    enum:
+                    - Builder
+                    - Pro
+                    - Scale
+                  quota:
+                    type: integer
+                    description: Total calls included for the key's lifetime.
+                  batch:
+                    type: boolean
+                    description: Whether the plan may call /v1/token-risk/batch.
+                  expiresAt:
+                    type: integer
+                    description: Unix ms timestamp when the key expires.
+                  note:
+                    type: string
+        '202':
+          description: Payment not confirmed on-chain yet — retry shortly.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V1ErrorBody'
+        '400':
+          $ref: '#/components/responses/V1Error'
+        '409':
+          description: This payment signature has already been redeemed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V1ErrorBody'
+        '500':
+          $ref: '#/components/responses/V1Error'
+      tags:
+      - Keys
+components:
+  responses:
+    V1Error:
+      description: 'Error. `Cache-Control: no-store`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/V1ErrorBody'
+  schemas:
+    V1ErrorBody:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          const: false
+        error:
+          type: string
+        pending:
+          type: boolean
+          description: Present on 202 from /v1/keys while the payment is unconfirmed.
+        resetsAt:
+          type: integer
+          description: Unix ms timestamp when the limit resets (present on some 429s).
+        details:
+          type: string
+      required:
+      - ok
+      - error
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key from POST /v1/keys (vx_ + 32 hex chars). Omit it to use the keyless free tier (100 calls/day per IP).

@@ -1,0 +1,280 @@
+openapi: 3.2.0
+info:
+  title: HostDeFi Token Risk Analyze Token API
+  version: 1.0.0
+  description: 'Public product surface of the scam-check-api service: the /v1 Token Risk API (same proprietary A+–F Safety Read rendered on the HostDeFi token pages, plus pre-graduation on-chain signals for Solana), key purchase/usage endpoints, and the free contract scanner at POST /analyze-token. Keyless callers get a per-IP fair-use tier of 100 calls/day on the verdict endpoints; paid API keys (bought with SOL via POST /v1/keys) raise the quota and unlock batch. Send an API key as the `x-api-key` header.'
+  contact:
+    url: https://hostdefi.com/docs/api/
+    email: trustdex.app@gmail.com
+servers:
+- url: https://hostdefi.com/api
+  description: 'Canonical branded base — /v1/* served via the hostdefi.com edge (use this in new integrations). Note: /analyze-token is exposed here as POST /api/scan.'
+- url: https://awake-integrity-production-faa0.up.railway.app
+  description: Origin host (Railway) — keeps working for existing integrations; all paths incl. /analyze-token.
+security:
+- {}
+- ApiKeyHeader: []
+tags:
+- name: Analyze Token
+paths:
+  /analyze-token:
+    servers:
+    - url: https://awake-integrity-production-faa0.up.railway.app
+      description: Railway origin only — this path is not proxied on the branded base. On hostdefi.com the same handler is POST /api/scan (the /scan entry in this spec).
+    post:
+      summary: Free contract scanner (100/day/IP fair-use, no key required)
+      description: The free web scanner behind the HostDeFi token pages. No paywall — the per-IP fair-use cap of 100 checks/day (honest 429) is the only limiter. Accepts a contract address, or an exact token name/ticker (resolved to the top-liquidity match). Response combines an AI risk narrative (with a deterministic data-driven fallback when the AI budget is exhausted) with DexScreener/CoinGecko market metrics and on-chain contract permission reads.
+      operationId: postAnalyzeToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  description: Token contract address, or an exact token name/ticker. `tokenAddress` is accepted as an alias.
+                tokenAddress:
+                  type: string
+                  description: Alias for `text`.
+            example:
+              text: So11111111111111111111111111111111111111112
+      responses:
+        '200':
+          $ref: '#/components/responses/ScannerResult'
+        '400':
+          $ref: '#/components/responses/ScannerBadRequest'
+        '404':
+          $ref: '#/components/responses/ScannerNotFound'
+        '429':
+          $ref: '#/components/responses/ScannerRateLimited'
+        '500':
+          $ref: '#/components/responses/ScannerServerError'
+        '504':
+          $ref: '#/components/responses/ScannerTimeout'
+      tags:
+      - Analyze Token
+components:
+  responses:
+    ScannerServerError:
+      description: Server error.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+    ScannerResult:
+      description: Analysis result.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AnalyzeTokenResult'
+    ScannerTimeout:
+      description: Analysis timed out.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScannerError'
+    ScannerRateLimited:
+      description: Fair-use cap reached (100 free checks/day per IP; resets within 24h).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScannerError'
+    ScannerBadRequest:
+      description: Missing or unrecognized input.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScannerError'
+    ScannerNotFound:
+      description: No DEX data found for that address.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScannerError'
+  schemas:
+    ScannerError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+          description: Human-readable explanation safe to show end users.
+      required:
+      - error
+    AnalyzeTokenResult:
+      type: object
+      description: 'Free scanner analysis: AI narrative (or deterministic fallback) + market metrics + on-chain contract permission reads.'
+      properties:
+        riskLevel:
+          type: string
+          enum:
+          - Low
+          - Medium
+          - High
+        summary:
+          type: string
+        keySignals:
+          type: array
+          items:
+            type: string
+        concerningIndicators:
+          type: array
+          items:
+            type: string
+        legitimateElements:
+          type: array
+          items:
+            type: string
+        finalTake:
+          type: string
+        recommendedActions:
+          type: array
+          items:
+            type: string
+        tokenName:
+          type:
+          - string
+          - 'null'
+        symbol:
+          type:
+          - string
+          - 'null'
+        chain:
+          type:
+          - string
+          - 'null'
+        contractAddress:
+          type:
+          - string
+          - 'null'
+        coinGeckoRank:
+          type:
+          - integer
+          - 'null'
+        categories:
+          type: array
+          items:
+            type: string
+        score:
+          type: string
+          description: Liquidity-confidence text (legacy field name).
+        aiConfigured:
+          type: boolean
+        subscriber:
+          type: boolean
+        checkedAt:
+          type: string
+          format: date-time
+        dataSources:
+          type: object
+          properties:
+            dexScreener:
+              type: boolean
+            coinGecko:
+              type: boolean
+            onChain:
+              type: boolean
+        contractData:
+          type: object
+          description: On-chain contract permission reads (SPL authorities / EVM owner state, holder concentration); shape varies by chain and availability.
+          additionalProperties: true
+        metrics:
+          type: object
+          properties:
+            liquidityUSD:
+              type:
+              - number
+              - 'null'
+            volume24h:
+              type:
+              - number
+              - 'null'
+            priceChange24h:
+              type:
+              - number
+              - 'null'
+            pairAge:
+              type:
+              - string
+              - 'null'
+              description: Human-formatted pair age, e.g. "3d 4h".
+            fdv:
+              type:
+              - number
+              - 'null'
+            marketCap:
+              type:
+              - number
+              - 'null'
+            priceUsd:
+              type:
+              - number
+              - 'null'
+            buys24h:
+              type:
+              - number
+              - 'null'
+            sells24h:
+              type:
+              - number
+              - 'null'
+            liquidityConfidence:
+              type: string
+              enum:
+              - HIGH
+              - MEDIUM
+              - LOW
+              - UNKNOWN
+            liquidityConfidenceText:
+              type: string
+            volumeLiquidityRatio:
+              type:
+              - number
+              - 'null'
+            fdvLiquidityRatio:
+              type:
+              - number
+              - 'null'
+            cgMarketCapToLiquidityRatio:
+              type:
+              - number
+              - 'null'
+            cgMarketCapUsd:
+              type:
+              - number
+              - 'null'
+            cgVolume24hUsd:
+              type:
+              - number
+              - 'null'
+            cgCirculatingSupply:
+              type:
+              - number
+              - 'null'
+            cgTotalSupply:
+              type:
+              - number
+              - 'null'
+            cgAllTimeHigh:
+              type:
+              - number
+              - 'null'
+            cgAthChangePercent:
+              type:
+              - number
+              - 'null'
+        aiError:
+          type: string
+          description: Present when the AI narrative fell back to the deterministic analysis (reason string).
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key from POST /v1/keys (vx_ + 32 hex chars). Omit it to use the keyless free tier (100 calls/day per IP).

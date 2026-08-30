@@ -1,0 +1,104 @@
+openapi: 3.2.0
+info:
+  title: HostDeFi Token Risk Usage API
+  version: 1.0.0
+  description: 'Public product surface of the scam-check-api service: the /v1 Token Risk API (same proprietary A+–F Safety Read rendered on the HostDeFi token pages, plus pre-graduation on-chain signals for Solana), key purchase/usage endpoints, and the free contract scanner at POST /analyze-token. Keyless callers get a per-IP fair-use tier of 100 calls/day on the verdict endpoints; paid API keys (bought with SOL via POST /v1/keys) raise the quota and unlock batch. Send an API key as the `x-api-key` header.'
+  contact:
+    url: https://hostdefi.com/docs/api/
+    email: trustdex.app@gmail.com
+servers:
+- url: https://hostdefi.com/api
+  description: 'Canonical branded base — /v1/* served via the hostdefi.com edge (use this in new integrations). Note: /analyze-token is exposed here as POST /api/scan.'
+- url: https://awake-integrity-production-faa0.up.railway.app
+  description: Origin host (Railway) — keeps working for existing integrations; all paths incl. /analyze-token.
+security:
+- {}
+- ApiKeyHeader: []
+tags:
+- name: Usage
+paths:
+  /v1/usage:
+    get:
+      summary: Usage and quota for an API key
+      operationId: getUsage
+      security:
+      - ApiKeyHeader: []
+      parameters:
+      - name: apiKey
+        in: query
+        required: false
+        schema:
+          type: string
+        description: Alternative to the `x-api-key` header.
+      responses:
+        '200':
+          description: Current usage for the key.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    const: true
+                  plan:
+                    type: string
+                    enum:
+                    - week
+                    - month
+                    - year
+                  planName:
+                    type: string
+                    enum:
+                    - Builder
+                    - Pro
+                    - Scale
+                  batch:
+                    type: boolean
+                  quota:
+                    type: integer
+                  used:
+                    type: integer
+                  remaining:
+                    type: integer
+                  expiresAt:
+                    type: integer
+                    description: Unix ms timestamp when the key expires.
+        '401':
+          $ref: '#/components/responses/V1Error'
+      tags:
+      - Usage
+components:
+  schemas:
+    V1ErrorBody:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          const: false
+        error:
+          type: string
+        pending:
+          type: boolean
+          description: Present on 202 from /v1/keys while the payment is unconfirmed.
+        resetsAt:
+          type: integer
+          description: Unix ms timestamp when the limit resets (present on some 429s).
+        details:
+          type: string
+      required:
+      - ok
+      - error
+  responses:
+    V1Error:
+      description: 'Error. `Cache-Control: no-store`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/V1ErrorBody'
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key from POST /v1/keys (vx_ + 32 hex chars). Omit it to use the keyless free tier (100 calls/day per IP).

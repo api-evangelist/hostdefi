@@ -1,0 +1,74 @@
+openapi: 3.2.0
+info:
+  title: HostDeFi Token Risk Health API
+  version: 1.0.0
+  description: 'Public product surface of the scam-check-api service: the /v1 Token Risk API (same proprietary A+–F Safety Read rendered on the HostDeFi token pages, plus pre-graduation on-chain signals for Solana), key purchase/usage endpoints, and the free contract scanner at POST /analyze-token. Keyless callers get a per-IP fair-use tier of 100 calls/day on the verdict endpoints; paid API keys (bought with SOL via POST /v1/keys) raise the quota and unlock batch. Send an API key as the `x-api-key` header.'
+  contact:
+    url: https://hostdefi.com/docs/api/
+    email: trustdex.app@gmail.com
+servers:
+- url: https://hostdefi.com/api
+  description: 'Canonical branded base — /v1/* served via the hostdefi.com edge (use this in new integrations). Note: /analyze-token is exposed here as POST /api/scan.'
+- url: https://awake-integrity-production-faa0.up.railway.app
+  description: Origin host (Railway) — keeps working for existing integrations; all paths incl. /analyze-token.
+security:
+- {}
+- ApiKeyHeader: []
+tags:
+- name: Health
+paths:
+  /v1/health:
+    get:
+      summary: Liveness, plan table, and upstream configuration
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service health and public configuration.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    const: true
+                  nexusConfigured:
+                    type: boolean
+                    description: Whether Solana pre-graduation on-chain signals are available.
+                  goplusChains:
+                    type: array
+                    items:
+                      type: string
+                    description: EVM chains covered by security data.
+                  plans:
+                    type: object
+                    description: Plan table keyed by plan id (week/month/year).
+                    additionalProperties:
+                      type: object
+                      properties:
+                        sol:
+                          type: number
+                          description: Price in SOL.
+                        days:
+                          type: integer
+                        quota:
+                          type: integer
+                        batch:
+                          type: boolean
+                        label:
+                          type: string
+                  freeTier:
+                    type: object
+                    properties:
+                      perIpPerDay:
+                        type: integer
+                        const: 100
+      tags:
+      - Health
+components:
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: API key from POST /v1/keys (vx_ + 32 hex chars). Omit it to use the keyless free tier (100 calls/day per IP).
