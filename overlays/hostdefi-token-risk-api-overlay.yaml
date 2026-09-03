@@ -1,0 +1,26 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for HostDeFi Token Risk API
+  version: 1.0.0
+extends: openapi/hostdefi-token-risk-api-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist:
+      enriched: '2026-09-03'
+      conventions: conventions/hostdefi-conventions.yml
+      errors: errors/hostdefi-problem-types.yml
+      rate-limits: rate-limits/hostdefi-rate-limits.yml
+      plans: plans/hostdefi-plans-pricing.yml
+      finops: finops/hostdefi-x402-manifest.json
+      note: >-
+        The x402 machine-payable twin of this lane is specified in
+        openapi/hostdefi-x402-machine-payable-api-openapi.yml; the free tier needs no key
+        (100 calls/day per IP) and the keyed tiers are bought with SOL via POST /v1/keys.
+- target: $.info
+  update:
+    x-agent-surfaces:
+      mcp: https://hostdefi.com/api/v1/mcp
+      a2a: https://hostdefi.com/api/v1/a2a
+      agent-card: https://hostdefi.com/.well-known/agent-card.json
+      x402-discovery: https://hostdefi.com/.well-known/x402

@@ -1,0 +1,59 @@
+generated: '2026-09-03'
+method: searched
+source: https://hostdefi.com/docs/api/ + openapi/_original/hostdefi-openapi.json
+authentication:
+  style: api-key-header
+  header: x-api-key
+  key_prefix: vx_
+  keyless_tier: 100 calls/day per IP, no key or account
+  machine_payment: x402 USDC per call on /v1/x402/* (v1 body + v2 header dual-stack), charge-on-success
+  cross_link: authentication/hostdefi-authentication.yml
+idempotency:
+  coverage: none
+  note: >-
+    No Idempotency-Key header or replay-protection contract is published for the mutating surface.
+    The one write with money attached, POST /v1/keys, burns its SOL payment signature after one use
+    and answers 409 on re-redemption — payment-level replay protection scoped to that operation, not
+    a documented idempotency mechanism an agent can rely on generally. x402 lanes are charge-on-success
+    (a failed call is not charged), which bounds the cost of a retry but does not deduplicate it.
+pagination:
+  style: none
+  note: Collection reads (radar, obituaries, listings, history) return bounded dated snapshots in one response; radar/history caps at 100 entries.
+versioning:
+  scheme: uri-path
+  current: v1
+error_envelope:
+  shape: '{ ok: false, error: "..." }'
+  content_type: application/json
+  note: Not RFC 9457. Error responses set Cache-Control no-store. Cross-link errors/hostdefi-problem-types.yml.
+rate_limit_signaling:
+  status: 429
+  headers: []
+  body: The 429 body names which limit was hit (fair-use, plan quota, or per-key burst) with a reset time, plus an x402 block offering the pay-per-call continuation.
+  in_band: meta.plan and meta.remaining ride on every 200 verdict response.
+request_tracing:
+  note: No request-id header documented.
+metadata:
+  note: Every verdict carries meta.checkedAt (data as-of stamp), meta.sources, meta.partial; x402 responses add meta.x402 with the settlement receipt, mirrored in the X-PAYMENT-RESPONSE header.
+reversibility:
+  summary: >-
+    The API's write surface is small and mostly purchases. No reversal operations exist: an API-key
+    purchase (POST /v1/keys with SOL, POST /v1/x402/keys via x402, $5) has no documented cancel or
+    refund path — the docs' only mitigations are pre-purchase (202 until the payment confirms;
+    charge-on-success on x402 lanes). The EVM swap endpoints return a ready-to-sign transaction and
+    never execute it — the agent signs and broadcasts from its own wallet, so commitment happens
+    outside the API and an on-chain swap is inherently irreversible.
+  writes:
+  - operation: postKeys
+    reversal: none
+    window: null
+    note: One-time payment-signature burn; 409 on reuse. No refund documented.
+  - operation: 'POST /v1/x402/keys'
+    reversal: none
+    window: null
+    note: $5 x402 payment mints a 30-day key in the paid response. No refund documented.
+  - operation: 'GET /v1/x402/swap/evm/quote'
+    reversal: n/a
+    window: null
+    note: Returns a transaction for the caller to sign; the API itself commits nothing (non-custodial).
+  read_only_note: All other operations are reads; reversibility is n/a for them.

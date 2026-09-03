@@ -1,0 +1,10 @@
+generated: '2026-09-03'
+method: searched
+source: registry.npmjs.org search, pypi.org, github.com search — probed 2026-09-03
+package_count: 0
+packages: []
+note: >-
+  No first-party client libraries found. npm search for "hostdefi" returns nothing, pypi.org/pypi/
+  hostdefi 404s, and no GitHub org exists (api.github.com/orgs/hostdefi 404). The docs' integration
+  story is deliberate: plain HTTP with curl, standard x402 clients (x402-fetch), the hosted MCP
+  server, and the A2A endpoint — no vendor SDK layer. Checked, nothing to record.

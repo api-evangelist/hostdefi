@@ -1,0 +1,43 @@
+generated: '2026-09-03'
+method: derived
+source: openapi/_original/hostdefi-openapi.json + live probes 2026-09-03
+standards:
+- id: x402
+  conforms: true
+  evidence: >-
+    Domain-standard signature, declared in the contract itself: the /v1/x402/* lane returns HTTP 402
+    with an x402Version 1 accepts array (verbatim challenge saved at finops/hostdefi-x402-challenge.json),
+    the discovery manifest at /.well-known/x402 declares x402Versions [1,2] with payTo and facilitator,
+    and the spec's X402PaymentRequired response documents the v1 body + v2 PAYMENT-REQUIRED header
+    dual-stack. Probed live 2026-09-03 (402 challenge and 200 manifest).
+- id: mcp
+  conforms: true
+  evidence: >-
+    Hosted streamable-HTTP MCP server at https://hostdefi.com/api/v1/mcp — tools/list answered
+    anonymously (JSON-RPC 2.0, 15 tools with inputSchema), saved at mcp/hostdefi-tools-list.json.
+- id: a2a
+  conforms: true
+  evidence: >-
+    A2A agent card served at /.well-known/agent-card.json (and legacy agent.json), protocolVersion
+    0.3.0, capabilities object, skills array — graded conformant in a2a/hostdefi-a2a.yml. JSONRPC
+    endpoint at https://hostdefi.com/api/v1/a2a.
+- id: oauth2
+  conforms: false
+  evidence: Single apiKey securityScheme (x-api-key header); no oauth2/OIDC schemes and no /.well-known OAuth metadata (404).
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: Errors are a plain {ok:false, error} JSON envelope, not application/problem+json.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: >-
+    security.txt is served only at the legacy root path /security.txt (200); the canonical
+    /.well-known/security.txt 404s even though the file's own Canonical field points there.
+- id: rfc8594-sunset
+  conforms: false
+  evidence: No Sunset/Deprecation header support published.
+- id: pagination
+  conforms: false
+  evidence: No pagination convention — collection endpoints return bounded dated snapshots in one response.
+- id: idempotency
+  conforms: false
+  evidence: No Idempotency-Key mechanism in the spec or docs; POST /v1/keys replay is guarded by one-time payment-signature burn (409 on reuse), which is payment-replay protection, not a general idempotency contract.

@@ -1,0 +1,15 @@
+generated: '2026-09-03'
+method: generated
+skills:
+- file: hostdefi-free-token-safety-scan.md
+  name: Scan a token for safety, free
+  api: openapi/hostdefi-token-risk-api-openapi.yml
+  operations: [postTokenRisk, getTokenRisk, postScan]
+- file: hostdefi-x402-pay-per-call.md
+  name: Pay per call with x402
+  api: openapi/hostdefi-x402-machine-payable-api-openapi.yml
+  operations: ['GET /v1/x402/pricing', 'GET /v1/x402/token-risk/{chain}/{address}', 'POST /v1/x402/token-risk']
+- file: hostdefi-buy-key-with-sol.md
+  name: Buy an API key with SOL and track quota
+  api: openapi/hostdefi-keys-api-openapi.yml
+  operations: [postKeys, getUsage, getHealth]

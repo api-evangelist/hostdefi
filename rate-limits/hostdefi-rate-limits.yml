@@ -1,0 +1,26 @@
+generated: '2026-09-03'
+method: searched
+source: https://hostdefi.com/docs/api/ + https://hostdefi.com/api/v1/health (freeTier block, probed 2026-09-03)
+limit_count: 3
+limits:
+- scope: per-ip (keyless free tier)
+  limit: 100
+  window: 1 day
+  burst: null
+  note: Published in docs and machine-readably as freeTier.perIpPerDay in GET /v1/health.
+- scope: per-key (plan quota)
+  limit: 10000-750000 per plan period
+  window: plan period (week/month/year)
+  burst: null
+  note: Builder 10k/week, Pro 60k/month, Scale 750k/year, Agent 5k/30d — see plans/hostdefi-plans-pricing.yml.
+- scope: per-key burst
+  limit: ~5
+  window: 1 second
+  burst: 5
+  note: Per-key burst ceiling documented in the 429 response description of the spec.
+response_headers: []
+headers_note: >-
+  No X-RateLimit-*/RateLimit-* headers are documented or observed. The runtime signal is in-band:
+  every 200 verdict carries meta.plan and meta.remaining, and a 429 body names which limit was hit
+  with a reset time plus an x402 block for pay-per-call continuation. Status code on exhaustion: 429.
+exhaustion_status: 429

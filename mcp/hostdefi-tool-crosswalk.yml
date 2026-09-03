@@ -1,0 +1,133 @@
+generated: '2026-09-03'
+method: derived
+source: mcp/hostdefi-tools-list.json + openapi/_original/hostdefi-openapi.json
+note: >-
+  HostDeFi's published OpenAPI declares operationIds only on the key/free lane (getTokenRisk, postTokenRisk,
+  postTokenRiskBatch, postKeys, getUsage, getHealth, postAnalyzeToken, postScan); the entire /v1/x402/ lane
+  ships without operationIds, so x402-lane bindings below are recorded as METHOD PATH strings against the
+  provider's own spec. Every binding was matched on the provider's own tool description vs the operation
+  summary — descriptions are near-verbatim twins, so confidence is high throughout.
+surfaces:
+  openapi: openapi/_original/hostdefi-openapi.json
+  mcp:
+    url: https://hostdefi.com/api/v1/mcp
+    gated: false
+    note: tools/list answers anonymously; paid tool EXECUTION requires an x402 USDC payment per call.
+  a2a:
+    url: https://hostdefi.com/api/v1/a2a
+    note: message/send runs the free scanner only; declared in a2a/hostdefi-agent-card.json.
+crosswalk:
+- tool: scan_token
+  category: token-safety
+  rest: [postAnalyzeToken, postScan]
+  binding: rest
+  confidence: high
+  note: Same free scanner; POST /analyze-token on the Railway origin, POST /api/scan on the branded edge.
+- tool: get_x402_pricing
+  category: pricing
+  rest: ['GET /v1/x402/pricing']
+  binding: rest
+  confidence: high
+- tool: token_risk_verdict
+  category: token-safety
+  rest: ['GET /v1/x402/token-risk/{chain}/{address}', 'POST /v1/x402/token-risk']
+  binding: rest
+  confidence: high
+- tool: token_risk_deep
+  category: token-safety
+  rest: ['GET /v1/x402/token-risk/deep/{chain}/{address}']
+  binding: rest
+  confidence: high
+- tool: pregrad_signals
+  category: token-safety
+  rest: ['GET /v1/x402/signals/solana/{mint}']
+  binding: rest
+  confidence: high
+- tool: radar_alerts
+  category: market-data
+  rest: ['GET /v1/x402/radar']
+  binding: rest
+  confidence: high
+- tool: x402_provider_risk
+  category: x402-ecosystem
+  rest: ['GET /v1/x402/provider-risk']
+  binding: rest
+  confidence: high
+- tool: buy_api_key
+  category: account
+  rest: ['POST /v1/x402/keys']
+  binding: rest
+  confidence: high
+- tool: swap_evm_quote
+  category: trading
+  rest: ['GET /v1/x402/swap/evm/quote']
+  binding: rest
+  confidence: high
+- tool: swap_evm_price
+  category: trading
+  rest: ['GET /v1/x402/swap/evm/price']
+  binding: rest
+  confidence: high
+- tool: token_report
+  category: token-safety
+  rest: ['GET /v1/x402/token-risk/report/{chain}/{address}']
+  binding: rest
+  confidence: high
+- tool: wallet_exposure
+  category: wallet
+  rest: ['POST /v1/x402/wallet']
+  binding: rest
+  confidence: high
+- tool: token_launches
+  category: market-data
+  rest: ['GET /v1/x402/launches']
+  binding: rest
+  confidence: high
+- tool: predict_markets
+  category: prediction-markets
+  rest: ['GET /v1/x402/predict/markets']
+  binding: rest
+  confidence: high
+- tool: predict_history
+  category: prediction-markets
+  rest: ['GET /v1/x402/predict/history']
+  binding: rest
+  confidence: high
+mcp_only: []
+rest_only:
+- operation: getTokenRisk
+  capability: keyed/free token-risk verdict lane (GET by chain+address)
+- operation: postTokenRisk
+  capability: keyed/free token-risk verdict lane (free-form query)
+- operation: postTokenRiskBatch
+  capability: keyed batch verdicts (paid plans)
+- operation: postKeys
+  capability: buy an API key with SOL (on-chain payment + signature claim)
+- operation: getUsage
+  capability: key quota/usage read
+- operation: getHealth
+  capability: liveness + live plan table
+- operation: 'GET /v1/x402/token-risk/history/{chain}/{address}'
+  capability: dated per-token grade history
+- operation: 'POST /v1/x402/token-risk/batch'
+  capability: x402 batch verdicts (flat price, up to 10)
+- operation: 'GET /v1/x402/authority/solana/{mint}'
+  capability: authority quick-check
+- operation: 'POST /v1/x402/portfolio'
+  capability: wallet portfolio audit (graded largest holdings)
+- operation: 'GET /v1/x402/obituaries'
+  capability: rug/collapse gate-exit ledger
+- operation: 'GET /v1/x402/listings/{chain}'
+  capability: graded token listing per chain
+- operation: 'GET /v1/x402/datasets/safety-snapshot'
+  capability: full weekly safety-snapshot dataset
+- operation: 'GET /v1/x402/radar/history'
+  capability: full radar alert history
+- operation: 'GET /v1/x402/provider-risk/all'
+  capability: full x402 provider-risk dataset
+coverage:
+  mcp_tools: 15
+  mcp_tools_bound: 15
+  mcp_only: 0
+  rest_operations_total: 32
+  rest_operations_with_tool: 17

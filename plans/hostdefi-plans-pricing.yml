@@ -1,0 +1,52 @@
+generated: '2026-09-03'
+method: probed
+source: https://hostdefi.com/api/v1/health (machine-readable plan table) + https://hostdefi.com/docs/api/ (pricing section)
+note: >-
+  The live plan table is published machine-readably in GET /v1/health (probed 2026-09-03, HTTP 200);
+  the docs pricing table matches. SOL-denominated prices may be adjusted as the SOL price moves — the
+  docs point at /v1/health as the source of truth. The x402 lane is per-call USDC with its own live
+  price sheet at GET /v1/x402/pricing (finops/hostdefi-x402-manifest.json, 23 priced resources).
+plan_count: 5
+currency: SOL (keyed plans) / USDC (x402 lane)
+plans:
+- name: Free
+  price: 0
+  currency: SOL
+  period: none
+  quota: 100 requests/day per IP
+  batch: false
+  note: Keyless — no account, no key. Matches the free web scanner promise.
+- name: Builder
+  price: 0.15
+  currency: SOL
+  period: week
+  quota: 10000 requests/week
+  batch: false
+- name: Pro
+  price: 0.5
+  currency: SOL
+  period: month
+  quota: 60000 requests/month
+  batch: true
+- name: Scale
+  price: 1.5
+  currency: SOL
+  period: year
+  quota: 750000 requests/year
+  batch: true
+- name: Agent (x402)
+  price: 5
+  currency: USDC
+  period: 30 days
+  quota: 5000 calls
+  batch: true
+  note: >-
+    Bought with one x402 payment (POST /v1/x402/keys) — the key arrives in the paid response; no
+    account, no signup. Alternatively pure pay-as-you-go per call on /v1/x402/* ($0.002–$0.25 per
+    resource, live sheet at /v1/x402/pricing) with no key at all.
+overage: >-
+  No overage — a 429 names the exhausted quota with a reset time and offers the x402 pay-per-call
+  lane as immediate continuation.
+purchase: >-
+  Keyed plans are bought by sending SOL to the published wallet and redeeming the transaction
+  signature at POST /v1/keys (signature burned after one use; key shown once).

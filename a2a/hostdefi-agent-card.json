@@ -1,0 +1,133 @@
+{
+  "protocolVersion": "0.3.0",
+  "name": "HostDeFi Token Risk API",
+  "description": "Machine-payable token-safety intelligence for AI agents: A+-F risk verdicts, pre-graduation Solana signals, authority checks, wallet portfolio audits and a trend-radar feed. Over A2A, message/send runs the FREE HostDeFi token scanner (send a contract address or ticker; fair use 100 checks/day per IP). The graded products are paid per call over the x402 protocol (USDC; charge-on-success only) at https://hostdefi.com/api/v1/x402/pricing or via the hosted MCP server at https://hostdefi.com/api/v1/mcp - no key, no account. API keys purchasable in one x402 payment for volume.",
+  "url": "https://hostdefi.com/api/v1/a2a",
+  "preferredTransport": "JSONRPC",
+  "provider": {
+    "organization": "HostDeFi",
+    "url": "https://hostdefi.com"
+  },
+  "version": "1.2.0",
+  "documentationUrl": "https://hostdefi.com/docs/api/",
+  "iconUrl": "https://hostdefi.com/logo512.png",
+  "supportsAuthenticatedExtendedCard": false,
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false
+  },
+  "defaultInputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "text/plain",
+    "application/json"
+  ],
+  "payments": {
+    "protocol": "x402",
+    "version": 1,
+    "discovery": "https://hostdefi.com/.well-known/x402",
+    "pricing": "https://hostdefi.com/api/v1/x402/pricing"
+  },
+  "skills": [
+    {
+      "id": "token-safety-scan",
+      "name": "Free token safety scan (A2A message/send)",
+      "description": "Send a Solana mint, an EVM 0x address, or an exact token name/ticker in a text or data part; the task completes with the free scanner's structured risk read (authority state, liquidity, holder concentration, contract flags) as a data-part artifact. No payment.",
+      "tags": [
+        "free",
+        "token-safety",
+        "risk",
+        "solana",
+        "evm",
+        "a2a"
+      ],
+      "examples": [
+        "is So11111111111111111111111111111111111111112 safe?",
+        "0x39dBED3a2bd333467115dE45665cC57F813C4571",
+        "PEPE"
+      ],
+      "inputModes": [
+        "text/plain",
+        "application/json"
+      ],
+      "outputModes": [
+        "text/plain",
+        "application/json"
+      ]
+    },
+    {
+      "id": "token-risk-verdict",
+      "name": "Token safety verdict",
+      "description": "A+-F grade, score and verdict prose for a token by chain + address, or by free-form query resolved to the top-liquidity match. Solana and major EVM chains (paid via x402 HTTP or the MCP tools, not over A2A).",
+      "tags": [
+        "crypto",
+        "token-safety",
+        "risk",
+        "solana",
+        "evm",
+        "x402"
+      ]
+    },
+    {
+      "id": "pregrad-signals",
+      "name": "Pre-graduation Solana signals",
+      "description": "Bundled-launch detection, curve-aware holder concentration, Token-2022 trap flags and authority state for early Solana mints (paid via x402 HTTP or the MCP tools, not over A2A).",
+      "tags": [
+        "solana",
+        "memecoin",
+        "launch",
+        "risk",
+        "x402"
+      ]
+    },
+    {
+      "id": "portfolio-audit",
+      "name": "Wallet portfolio audit",
+      "description": "Risk-graded verdicts for a Solana wallet's largest token holdings (up to 10) in one call (paid via x402 HTTP or the MCP tools, not over A2A).",
+      "tags": [
+        "solana",
+        "wallet",
+        "portfolio",
+        "risk",
+        "x402"
+      ]
+    },
+    {
+      "id": "trend-radar",
+      "name": "Trend-radar alerts",
+      "description": "Recent big dated movers with real market cap, as structured JSON (paid via x402 HTTP or the MCP tools, not over A2A).",
+      "tags": [
+        "market-data",
+        "alerts",
+        "x402"
+      ]
+    },
+    {
+      "id": "safety-datasets",
+      "name": "Safety datasets and listings",
+      "description": "Dated weekly snapshot data in bulk: graded token listings per chain (Solana + major EVM), the rug/collapse gate-exit ledger, radar alert history, and the full safety-snapshot dataset in one call (paid via x402 HTTP or the MCP tools, not over A2A).",
+      "tags": [
+        "dataset",
+        "token-safety",
+        "rug-pull",
+        "solana",
+        "evm",
+        "x402"
+      ]
+    },
+    {
+      "id": "x402-provider-risk",
+      "name": "x402 provider-risk grades",
+      "description": "Vet an x402 seller before paying it: A-F grades from observable signals (402-spec fidelity, price sanity, payTo presence, TLS, latency, reachability) for crawled x402 resources and providers, as a dated snapshot (paid via x402 HTTP or the MCP tools, not over A2A).",
+      "tags": [
+        "x402",
+        "agent-economy",
+        "trust",
+        "risk",
+        "dataset"
+      ]
+    }
+  ]
+}

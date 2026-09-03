@@ -1,12 +1,11 @@
 aid: hostdefi
 name: HostDeFi
-description: 'HostDeFi is a non-custodial Solana token-risk service that scans a mint before a purchase
-  — mint and freeze authority state, liquidity depth and lock status, holder concentration, dangerous
-  Token-2022 extensions, sell simulation and contract flags. The public contract is an OpenAPI 3.1 document
-  of 26 operations served from hostdefi.com/api with API-key authentication. HostDeFi also exposes an
-  x402 machine-payment surface: an authority quick-check endpoint that returns HTTP 402 with a signed
-  payment challenge, priced in USDC and payable on either Solana or Base, so an agent can buy a single
-  check without an account.'
+description: 'HostDeFi is a non-custodial Solana token-risk service that scans a mint before a purchase — mint and
+  freeze authority state, liquidity depth and lock status, holder concentration, dangerous Token-2022 extensions,
+  sell simulation and contract flags. The public contract is an OpenAPI 3.1 document of 32 operations served from
+  hostdefi.com/api with API-key authentication. HostDeFi also exposes an x402 machine-payment surface: an authority
+  quick-check endpoint that returns HTTP 402 with a signed payment challenge, priced in USDC and payable on either
+  Solana or Base, so an agent can buy a single check without an account.'
 type: Index
 url: https://raw.githubusercontent.com/api-evangelist/hostdefi/refs/heads/main/apis.yml
 deliveryModel:
@@ -20,8 +19,19 @@ deliveryModel:
   - openapi
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: unknown
+  onboarding: unknown
+  trial: false
+  try_now: false
+  public: false
+  label: Unknown
+  confidence: low
+  source: []
+  generated: '2026-09-02'
+  method: derived
 created: '2026-08-21'
-modified: '2026-08-21'
+modified: '2026-09-03'
 specificationVersion: '0.23'
 tags:
 - Solana
@@ -38,8 +48,7 @@ tags_raw:
 apis:
 - aid: hostdefi:hostdefi-token-risk-api
   name: HostDeFi Token Risk API
-  description: >-
-    Token risk scanning for Solana mints — authority state, liquidity, holder concentration, Token-2022
+  description: Token risk scanning for Solana mints — authority state, liquidity, holder concentration, Token-2022
     extension flags and sell simulation. 26 operations, API-key authentication.
   humanURL: https://hostdefi.com/docs/api/
   baseURL: https://hostdefi.com/api
@@ -57,7 +66,9 @@ apis:
   - type: FinOps
     url: finops/hostdefi-x402-challenge.json
   - type: MCPServer
-    url: mcp/hostdefi-tools-list.json
+    url: mcp/hostdefi-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/hostdefi-tool-crosswalk.yml
 - aid: hostdefi:hostdefi-analyze-token-api
   name: HostDeFi Analyze Token API
   description: The Analyze Token API from HostDeFi — 1 operation(s) for analyze token.
@@ -112,10 +123,9 @@ apis:
     url: openapi/hostdefi-usage-api-openapi.yml
 - aid: hostdefi:hostdefi-x402-machine-payable-api
   name: HostDeFi x402 (machine-payable) API
-  description: >-
-    Pay-per-call lane for AI agents (x402 protocol): no key, no account - pay USDC per request and get
-    the same A+-F Safety Read. Free tier and API-key plans are unchanged and remain the better per-call
-    price for steady use.
+  description: 'Pay-per-call lane for AI agents (x402 protocol): no key, no account - pay USDC per request and get
+    the same A+-F Safety Read. Free tier and API-key plans are unchanged and remain the better per-call price for
+    steady use.'
   humanURL: https://hostdefi.com/docs/api/
   baseURL: https://hostdefi.com/api
   tags:
@@ -124,8 +134,16 @@ apis:
   - type: OpenAPI
     url: openapi/hostdefi-x402-machine-payable-api-openapi.yml
 common:
+- type: AgenticAccess
+  url: agentic-access/hostdefi-agentic-access.yml
+- type: VulnerabilityDisclosure
+  url: security/hostdefi-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/hostdefi-domain-security.yml
+- type: Authentication
+  url: authentication/hostdefi-authentication.yml
 - type: MCPServer
-  url: mcp/hostdefi-tools-list.json
+  url: mcp/hostdefi-mcp.yml
 - type: FinOps
   url: finops/hostdefi-x402-manifest.json
 - type: LLMsTxt
@@ -134,6 +152,38 @@ common:
   url: https://hostdefi.com
 - type: DeveloperPortal
   url: https://hostdefi.com/docs/api/
+- type: AgentCard
+  url: a2a/hostdefi-a2a.yml
+- type: WellKnown
+  url: well-known/hostdefi-well-known.yml
+- type: SecurityTxt
+  url: well-known/hostdefi-security.txt
+- type: Security
+  url: https://hostdefi.com/why
+- type: ErrorCatalog
+  url: errors/hostdefi-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/hostdefi-lifecycle.yml
+- type: Conformance
+  url: conformance/hostdefi-conformance.yml
+- type: Conventions
+  url: conventions/hostdefi-conventions.yml
+- type: Plans
+  url: plans/hostdefi-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/hostdefi-rate-limits.yml
+- type: Packages
+  url: packages/hostdefi-packages.yml
+- type: DataModel
+  url: data-model/hostdefi-data-model.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Overlay
+  url: overlays/hostdefi-token-risk-api-overlay.yaml
+- type: Pricing
+  url: https://hostdefi.com/docs/api/
+- type: Support
+  url: https://t.me/hostdefiapps
 maintainers:
 - FN: HostDeFi
   email: apisio@hostdefi.com
@@ -142,27 +192,12 @@ x-provenance:
   added: '2026-08-21'
   method: searched
   source: https://hostdefi.com/llms.txt
-  note: 'Submitted via apis.io/add on 2026-08-20 (twice, as "HostDeFi" and "HostDeFi Token Risk API" —
-    one provider, two records at the gate). The submitted APIs.json URL, https://hostdefi.com/apis.json,
-    returns 404 against a control that also 404s, so the 404 is real; that is a bad pointer in the submission,
-    not an absent surface. NO API-CATALOG IS RECORDED, DELIBERATELY. https://hostdefi.com/.well-known/api-catalog
-    returns HTTP 200, but the body is the site''s HTML homepage, not a linkset. Recording it as an APICatalog
-    would hand HostDeFi credit for a discovery document it does not serve. The path answering 200 is not
-    the same as the artifact existing. The x402 surface was verified live. GET /api/v1/x402/authority/solana/{mint}
-    without a payment header returns HTTP 402 with x402Version 1 and two `accepts` entries — USDC on Solana
-    and on Base, maxAmountRequired 5000, 60-second timeout, with a named feePayer. The saved challenge
-    in finops/ is that response verbatim. The REST API was probed at /api/v1/health and returned 200.
-    One thing for the provider rather than for us: the published contract lists a second server, https://awake-integrity-production-faa0.up.railway.app,
-    which also answers /v1/health with 200. That looks like a staging backend reachable from a production
-    specification.
-
-    CORRECTION, recorded because it matters more than the finding. This record was first built by hand
-    from llms.txt plus probed paths, and it UNDER-reported the provider. The Add-API gate''s own stub
-    named two artifacts the hand pass missed, and both are real: a hosted MCP server at https://hostdefi.com/api/v1/mcp,
-    which answers tools/list anonymously with NINE tools, and an x402 discovery manifest at https://hostdefi.com/.well-known/x402
-    serving application/json with x402Versions [1,2], a payTo address and a facilitator. The MCP tools
-    carry their own prices in their descriptions: scan_token and get_x402_pricing are free, token_risk_verdict
-    $0.01/call, pregrad_signals $0.03, radar_alerts $0.01, x402_provider_risk $0.02, swap_evm_quote $0.01,
-    swap_evm_price $0.002, and buy_api_key $5 as a single payment that mints a 30-day Agent-plan key --
-    an agent can buy its own credential. Guessing paths and reading llms.txt was not sufficient here;
-    the gate''s discovery was better than the hand pass.'
+  note: |-
+    Submitted via apis.io/add on 2026-08-20 (twice, as "HostDeFi" and "HostDeFi Token Risk API" — one provider, two records at the gate). The submitted APIs.json URL, https://hostdefi.com/apis.json, returns 404 against a control that also 404s, so the 404 is real; that is a bad pointer in the submission, not an absent surface. NO API-CATALOG IS RECORDED, DELIBERATELY. https://hostdefi.com/.well-known/api-catalog returns HTTP 200, but the body is the site's HTML homepage, not a linkset. Recording it as an APICatalog would hand HostDeFi credit for a discovery document it does not serve. The path answering 200 is not the same as the artifact existing. The x402 surface was verified live. GET /api/v1/x402/authority/solana/{mint} without a payment header returns HTTP 402 with x402Version 1 and two `accepts` entries — USDC on Solana and on Base, maxAmountRequired 5000, 60-second timeout, with a named feePayer. The saved challenge in finops/ is that response verbatim. The REST API was probed at /api/v1/health and returned 200. One thing for the provider rather than for us: the published contract lists a second server, https://awake-integrity-production-faa0.up.railway.app, which also answers /v1/health with 200. That looks like a staging backend reachable from a production specification.
+    CORRECTION, recorded because it matters more than the finding. This record was first built by hand from llms.txt plus probed paths, and it UNDER-reported the provider. The Add-API gate's own stub named two artifacts the hand pass missed, and both are real: a hosted MCP server at https://hostdefi.com/api/v1/mcp, which answers tools/list anonymously with NINE tools, and an x402 discovery manifest at https://hostdefi.com/.well-known/x402 serving application/json with x402Versions [1,2], a payTo address and a facilitator. The MCP tools carry their own prices in their descriptions: scan_token and get_x402_pricing are free, token_risk_verdict $0.01/call, pregrad_signals $0.03, radar_alerts $0.01, x402_provider_risk $0.02, swap_evm_quote $0.01, swap_evm_price $0.002, and buy_api_key $5 as a single payment that mints a 30-day Agent-plan key -- an agent can buy its own credential. Guessing paths and reading llms.txt was not sufficient here; the gate's discovery was better than the hand pass.
+image: https://hostdefi.com/logo512.png
+x-enrichment:
+  date: '2026-09-03'
+  status: enriched
+  artifacts_added: 25
+  pass: local-v2

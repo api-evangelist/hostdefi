@@ -1,0 +1,69 @@
+generated: '2026-09-03'
+method: derived
+source: openapi/_original/hostdefi-openapi.json (components.schemas + response shapes)
+entities:
+- name: Token
+  description: The subject of every read — chain + address (Solana mint or EVM 0x), name, symbol.
+- name: Verdict
+  description: The graded read (schema Verdict) — token identity plus a RiskBlock and chain-specific signals, stamped meta.checkedAt.
+- name: RiskBlock
+  description: graded flag, score, A+-F grade, tier, verdict prose, knowns[]/unknowns[] receipts, notGradedReason.
+- name: SolanaSignals
+  description: authorities (mint/freeze), token2022Extensions trap flags, holders (curve-aware top10Pct), launch (bundled, firstSlotTxs, preGraduation), market.
+- name: EvmSignals
+  description: evmSecurity block from GoPlus — honeypot, buy/sell tax, mintable, pausable, blacklist, proxy, hiddenOwner, openSource.
+- name: MarketSignals
+  description: liquidityUsd, volume24h, priceUsd from DexScreener/CoinGecko.
+- name: ApiKey
+  description: vx_-prefixed credential minted by postKeys (SOL) or POST /v1/x402/keys (x402, $5) — plan, quota, expiresAt; readable via getUsage.
+- name: Plan
+  description: Plan table row (free/week/month/year/x402agent) — sol price, days, quota, batch — served machine-readably by getHealth.
+- name: X402Offer
+  description: Payment option in a 402 challenge (schema X402Offer) — scheme, network, asset, maxAmountRequired, payTo, resource, maxTimeoutSeconds.
+- name: RadarAlert
+  description: Dated trend-radar mover with real market cap (radar + radar/history).
+- name: Obituary
+  description: Gate-exit ledger row — a token that fell out of the liquidity/holder data gate, with peak stats and dates.
+- name: Listing
+  description: Graded token row in the dated weekly snapshot per chain.
+- name: ProviderRisk
+  description: A-F grade for an x402 seller from observable signals (402-spec fidelity, price sanity, payTo, TLS, latency).
+- name: SwapQuote
+  description: KyberSwap-routed EVM quote plus ready-to-sign transaction; 3% native-coin platform fee priced in.
+relationships:
+- from: Verdict
+  to: Token
+  kind: has_one
+  via: token
+- from: Verdict
+  to: RiskBlock
+  kind: has_one
+  via: risk
+- from: Verdict
+  to: SolanaSignals
+  kind: has_one
+  via: signals (Solana tokens)
+- from: Verdict
+  to: EvmSignals
+  kind: has_one
+  via: signals.evmSecurity (EVM tokens)
+- from: Verdict
+  to: MarketSignals
+  kind: has_one
+  via: signals.market
+- from: ApiKey
+  to: Plan
+  kind: belongs_to
+  via: plan
+- from: X402PaymentRequirements
+  to: X402Offer
+  kind: has_many
+  via: accepts
+- from: Listing
+  to: Token
+  kind: belongs_to
+  via: address
+- from: Obituary
+  to: Token
+  kind: belongs_to
+  via: address

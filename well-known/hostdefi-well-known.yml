@@ -1,0 +1,64 @@
+generated: '2026-09-03'
+method: searched
+note: >-
+  hostdefi.com serves a real machine surface at /.well-known/ — an A2A agent card (canonical and legacy
+  paths, byte-identical) and an x402 payment-discovery manifest. security.txt is served at the LEGACY
+  root path /security.txt (RFC 9116 secondary location) and its own Canonical field points at
+  /.well-known/security.txt, which 404s — a provider-fixable inconsistency. A negative-control probe
+  (/.well-known/hostdefi-negative-control-a91f3c2e.json) returned 404, so the 200s are real documents,
+  not an SPA catch-all. The Railway origin host serves the x402 manifest only.
+path_echo_control: passed
+hosts:
+- host: https://hostdefi.com
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    file: hostdefi-agent-card.json
+  - path: /.well-known/agent.json
+    status: 200
+    file: hostdefi-agent-card.json
+  - path: /.well-known/x402
+    status: 200
+    file: hostdefi-x402.json
+  - path: /security.txt
+    status: 200
+    file: hostdefi-security.txt
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+- host: https://awake-integrity-production-faa0.up.railway.app
+  documents:
+  - path: /.well-known/x402
+    status: 200
+    file: hostdefi-x402.json
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404

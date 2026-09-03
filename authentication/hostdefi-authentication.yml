@@ -1,0 +1,25 @@
+generated: '2026-09-03'
+method: derived
+source: openapi/hostdefi-analyze-token-api-openapi.yml, openapi/hostdefi-health-api-openapi.yml,
+  openapi/hostdefi-keys-api-openapi.yml, openapi/hostdefi-scan-api-openapi.yml, openapi/hostdefi-token-risk-api-openapi.yml,
+  openapi/hostdefi-usage-api-openapi.yml, openapi/hostdefi-x402-machine-payable-api-openapi.yml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: ApiKeyHeader
+  type: apiKey
+  in: header
+  parameter: x-api-key
+  description: API key from POST /v1/keys (vx_ + 32 hex chars). Omit it to use the keyless free
+    tier (100 calls/day per IP).
+  sources:
+  - openapi/hostdefi-analyze-token-api-openapi.yml
+  - openapi/hostdefi-health-api-openapi.yml
+  - openapi/hostdefi-keys-api-openapi.yml
+  - openapi/hostdefi-scan-api-openapi.yml
+  - openapi/hostdefi-token-risk-api-openapi.yml
+  - openapi/hostdefi-usage-api-openapi.yml
+  - openapi/hostdefi-x402-machine-payable-api-openapi.yml

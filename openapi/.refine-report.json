@@ -1,0 +1,37 @@
+{
+  "provider": "hostdefi",
+  "sources": [
+    "hostdefi-token-risk-api-openapi.yml"
+  ],
+  "outputs": [
+    "hostdefi-analyze-token-api-openapi.yml",
+    "hostdefi-health-api-openapi.yml",
+    "hostdefi-keys-api-openapi.yml",
+    "hostdefi-scan-api-openapi.yml",
+    "hostdefi-token-risk-api-openapi.yml",
+    "hostdefi-usage-api-openapi.yml",
+    "hostdefi-x402-machine-payable-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "hostdefi-token-risk-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "hostdefi-token-risk-api-openapi.yml: tagged paths GET /v1/token-risk/{chain}/{address} -> Token Risk",
+    "hostdefi-token-risk-api-openapi.yml: tagged paths POST /v1/token-risk -> Token Risk",
+    "hostdefi-token-risk-api-openapi.yml: tagged paths POST /v1/token-risk/batch -> Token Risk",
+    "hostdefi-token-risk-api-openapi.yml: tagged paths POST /v1/keys -> Keys",
+    "hostdefi-token-risk-api-openapi.yml: tagged paths GET /v1/usage -> Usage",
+    "hostdefi-token-risk-api-openapi.yml: tagged paths GET /v1/health -> Health",
+    "hostdefi-token-risk-api-openapi.yml: tagged paths POST /analyze-token -> Analyze Token",
+    "hostdefi-token-risk-api-openapi.yml: tagged paths POST /scan -> Scan",
+    "hostdefi-token-risk-api-openapi.yml: declared missing tag: Analyze Token",
+    "hostdefi-token-risk-api-openapi.yml: declared missing tag: Health",
+    "hostdefi-token-risk-api-openapi.yml: declared missing tag: Keys",
+    "hostdefi-token-risk-api-openapi.yml: declared missing tag: Scan",
+    "hostdefi-token-risk-api-openapi.yml: declared missing tag: Token Risk",
+    "hostdefi-token-risk-api-openapi.yml: declared missing tag: Usage",
+    "apis.yml register: written (+6 apis, 7 total)"
+  ],
+  "skipped": []
+}

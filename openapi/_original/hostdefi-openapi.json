@@ -556,7 +556,7 @@
       ],
       "post": {
         "summary": "Free contract scanner (100/day/IP fair-use, no key required)",
-        "description": "The free web scanner behind the HostDeFi token pages. No paywall — the per-IP fair-use cap of 100 checks/day (honest 429) is the only limiter. Accepts a contract address, or an exact token name/ticker (resolved to the top-liquidity match). Response combines an AI risk narrative (with a deterministic data-driven fallback when the AI budget is exhausted) with DexScreener/CoinGecko market metrics and on-chain contract permission reads.",
+        "description": "The free web scanner behind the HostDeFi token pages. No paywall — the per-IP fair-use cap of 100 checks/day (honest 429) is the only limiter. Accepts a contract address, or an exact token name/ticker (resolved to the top-liquidity match). Response combines an AI risk narrative (with a deterministic data-driven fallback when the AI budget is exhausted) with GeckoTerminal/CoinGecko market metrics and on-chain contract permission reads.",
         "operationId": "postAnalyzeToken",
         "requestBody": {
           "required": true,
@@ -718,7 +718,7 @@
           "price": {
             "currency": "USD",
             "mode": "fixed",
-            "amount": "0.01"
+            "amount": "0.02"
           },
           "protocols": [
             {
@@ -768,6 +768,136 @@
             },
             "description": "Daily rows returned: the most recent N days, oldest first (default 90).",
             "example": 90
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The dated series. Settled payment is confirmed by the X-PAYMENT-RESPONSE header and meta.x402. Each row carries the ts it was computed at.",
+            "headers": {
+              "X-PAYMENT-RESPONSE": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "base64-encoded JSON settlement receipt."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "chain": {
+                      "type": "string"
+                    },
+                    "address": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "rows": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "ts": {
+                            "type": "string"
+                          },
+                          "grade": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "score": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "liquidityUsd": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "volume24h": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "priceUsd": {
+                            "type": "number",
+                            "nullable": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "$ref": "#/components/responses/X402PaymentRequired"
+          },
+          "404": {
+            "description": "No recorded history for this token yet - nothing was charged. Any verdict call on it starts the series."
+          },
+          "503": {
+            "description": "x402 lane disabled or facilitator unreachable - the free tier and API keys are unaffected."
+          }
+        },
+        "x-payment-info": {
+          "price": {
+            "currency": "USD",
+            "mode": "fixed",
+            "amount": "0.02"
+          },
+          "protocols": [
+            {
+              "x402": {}
+            }
+          ]
+        },
+        "security": []
+      }
+    },
+    "/v1/x402/token-risk/deep/{chain}/{address}": {
+      "get": {
+        "summary": "Deep token report (verdict + full history + trend), paid per call via x402",
+        "description": "Everything HostDeFi knows about one token in a single paid call: the current A+-F verdict with authority and holder-concentration signals and market structure, the full dated safety history from the verdict ledger, and a derived trend block — grade movement, liquidity trajectory, worst peak-to-trough drawdown and days tracked. The trend is arithmetic over recorded rows only: no projections, no inferred causes. Machine-payable: the first call returns HTTP 402 with payment options; pay and retry with the X-PAYMENT header. Charge-on-success: a verdict that cannot be computed is an uncharged 5xx and a missing address an uncharged 400. History depth accrues from 2026-08-16, so a newly-seen token legitimately has a short series — history.available and history.count say so in the response.",
+        "tags": [
+          "x402 (machine-payable)"
+        ],
+        "parameters": [
+          {
+            "name": "chain",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Chain id, e.g. solana, ethereum, base, arbitrum.",
+            "example": "solana"
+          },
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Token contract address (Solana mint or 0x EVM address; EVM matches case-insensitively).",
+            "example": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 365
+            },
+            "description": "Daily history rows returned, oldest first (default 365 — depth is the point of this product).",
+            "example": 365
           }
         ],
         "responses": {
@@ -919,7 +1049,7 @@
           "price": {
             "currency": "USD",
             "mode": "fixed",
-            "amount": "0.01"
+            "amount": "0.02"
           },
           "protocols": [
             {
@@ -1018,7 +1148,7 @@
           "price": {
             "currency": "USD",
             "mode": "fixed",
-            "amount": "0.08"
+            "amount": "0.15"
           },
           "protocols": [
             {
@@ -1094,7 +1224,7 @@
           "price": {
             "currency": "USD",
             "mode": "fixed",
-            "amount": "0.03"
+            "amount": "0.05"
           },
           "protocols": [
             {
@@ -1210,7 +1340,7 @@
           "price": {
             "currency": "USD",
             "mode": "fixed",
-            "amount": "0.08"
+            "amount": "0.15"
           },
           "protocols": [
             {
@@ -1637,7 +1767,7 @@
             }
           ]
         },
-        "description": "Firm KyberSwap-routed quote plus a ready-to-sign transaction for the taker's own wallet - non-custodial, no key, no account. Query params: chainId, sellToken and buyToken ('native' or a 0x 40-hex address), sellAmount (integer, base units), taker (0x address), optional ref (referrer 0x address). The returned transaction includes a 3% platform fee in the chain's native coin, on top of the swap. Bad params answer 400 before any payment starts; no-route and upstream errors pass through as 4xx/5xx and are never settled.",
+        "description": "Firm KyberSwap-routed quote plus a ready-to-sign transaction for the taker's own wallet - non-custodial, no key, no account. Query params: chainId, sellToken and buyToken ('native' or a 0x 40-hex address), sellAmount (integer, base units), taker (0x address), optional ref (referrer 0x address). The returned transaction includes a 1% platform fee in the chain's native coin, on top of the swap. Bad params answer 400 before any payment starts; no-route and upstream errors pass through as 4xx/5xx and are never settled.",
         "tags": [
           "x402 (machine-payable)"
         ],
@@ -1711,6 +1841,624 @@
             "description": "Backend not configured / temporarily unavailable - nothing was charged."
           }
         }
+      }
+    },
+    "/v1/x402/token-risk/report/{chain}/{address}": {
+      "get": {
+        "summary": "Full due-diligence report (verdict + signals + history + cross-checks), paid per call via x402",
+        "description": "One document per token: the A+–F verdict with on-chain signals (authority state, bundled-launch read, holder concentration, Token-2022 traps on Solana), the dated verdict-history series, trend-radar mentions and a rug-ledger cross-check (symbol+chain — the ledger records no addresses, so a match is a flag to verify, never proof of identity), plus a deterministic summary line. Machine-payable: first call returns HTTP 402 with payment options; pay and retry with the X-PAYMENT header. The verdict is the report's spine — its failure is an uncharged 5xx; auxiliary sections fail soft inside the 200 and declare their absence in sectionErrors.",
+        "tags": [
+          "x402 (machine-payable)"
+        ],
+        "parameters": [
+          {
+            "name": "chain",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Chain id, e.g. solana, ethereum, base, arbitrum.",
+            "example": "solana"
+          },
+          {
+            "name": "address",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Token contract address (Solana mint or 0x EVM address).",
+            "example": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263"
+          },
+          {
+            "name": "historyLimit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 365
+            },
+            "description": "History rows included: the most recent N days (default 90).",
+            "example": 90
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The report. Settled payment is confirmed by the X-PAYMENT-RESPONSE header and meta.x402.",
+            "headers": {
+              "X-PAYMENT-RESPONSE": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "base64-encoded JSON settlement receipt."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "token": {
+                      "type": "object"
+                    },
+                    "risk": {
+                      "type": "object"
+                    },
+                    "signals": {
+                      "type": "object"
+                    },
+                    "history": {
+                      "type": "object",
+                      "properties": {
+                        "count": {
+                          "type": "integer"
+                        },
+                        "epoch": {
+                          "type": "string"
+                        },
+                        "rows": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    "radarMentions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "rugLedger": {
+                      "type": "object",
+                      "properties": {
+                        "matched": {
+                          "type": "boolean"
+                        },
+                        "matchedBy": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "entries": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    },
+                    "summary": {
+                      "type": "string"
+                    },
+                    "meta": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts and retry."
+          }
+        },
+        "x-payment-info": {
+          "price": {
+            "currency": "USD",
+            "mode": "fixed",
+            "amount": "0.35"
+          },
+          "protocols": [
+            {
+              "x402": {}
+            }
+          ]
+        },
+        "security": []
+      }
+    },
+    "/v1/x402/wallet": {
+      "post": {
+        "summary": "Wallet risk-exposure read (Solana), paid per call via x402",
+        "description": "The wallet's largest token holdings (up to 10, by balance) graded through the full verdict path, exposure counts by risk tier, a deterministic exposure grade (≥3 High → D · ≥1 High → C · unknowns outnumber graded → C · ≥1 Medium → B · else A) and a rug-ledger symbol cross-check. Holdings exposure heuristics — explicitly NOT AML attribution, provenance tracing or sanctions screening. Charge-on-success: an empty wallet is an uncharged 404, an unreadable RPC an uncharged 503.",
+        "tags": [
+          "x402 (machine-payable)"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "wallet"
+                ],
+                "properties": {
+                  "wallet": {
+                    "type": "string",
+                    "description": "Solana wallet address (base58)."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The exposure read. Settled payment is confirmed by the X-PAYMENT-RESPONSE header and meta.x402.",
+            "headers": {
+              "X-PAYMENT-RESPONSE": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "base64-encoded JSON settlement receipt."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "wallet": {
+                      "type": "string"
+                    },
+                    "holdingsFound": {
+                      "type": "integer"
+                    },
+                    "audited": {
+                      "type": "integer"
+                    },
+                    "exposureGrade": {
+                      "type": "string"
+                    },
+                    "exposure": {
+                      "type": "object",
+                      "properties": {
+                        "high": {
+                          "type": "integer"
+                        },
+                        "medium": {
+                          "type": "integer"
+                        },
+                        "low": {
+                          "type": "integer"
+                        },
+                        "notGraded": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "gateExitSymbolMatches": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "note": {
+                      "type": "string"
+                    },
+                    "holdings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "meta": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts and retry."
+          },
+          "404": {
+            "description": "No token holdings found for that wallet — nothing was charged."
+          },
+          "503": {
+            "description": "Could not read the wallet (RPC unavailable) — nothing was charged."
+          }
+        },
+        "x-payment-info": {
+          "price": {
+            "currency": "USD",
+            "mode": "fixed",
+            "amount": "0.10"
+          },
+          "protocols": [
+            {
+              "x402": {}
+            }
+          ]
+        },
+        "security": []
+      }
+    },
+    "/v1/x402/launches": {
+      "get": {
+        "summary": "Fresh token launches with safety pre-reads, paid per call via x402",
+        "description": "The newest token profiles for a chain, each annotated with HostDeFi safety pre-reads: authority state, bundled-launch flag, holder concentration and market depth, plus a fail-closed `clean` flag — true only when mint AND freeze authorities are provably revoked, liquidity ≥ $25K and top-10 concentration ≤ 60% (an unknown is never a pass; cleanReasons lists what failed or is unknown). Responses are cached ~60s server-side. Charge-on-success: an empty chain answers an uncharged 404, an unavailable upstream an uncharged 503.",
+        "tags": [
+          "x402 (machine-payable)"
+        ],
+        "parameters": [
+          {
+            "name": "chain",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Chain filter (default solana).",
+            "example": "solana"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            },
+            "description": "Max launches returned (default 10).",
+            "example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The annotated launch list. Settled payment is confirmed by the X-PAYMENT-RESPONSE header and meta.x402.",
+            "headers": {
+              "X-PAYMENT-RESPONSE": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "base64-encoded JSON settlement receipt."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "chain": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "launches": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "address": {
+                            "type": "string"
+                          },
+                          "chain": {
+                            "type": "string"
+                          },
+                          "symbol": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "name": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "market": {
+                            "type": "object"
+                          },
+                          "authorities": {
+                            "type": "object"
+                          },
+                          "launch": {
+                            "type": "object"
+                          },
+                          "holders": {
+                            "type": "object"
+                          },
+                          "clean": {
+                            "type": "boolean"
+                          },
+                          "cleanReasons": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts and retry."
+          },
+          "404": {
+            "description": "No fresh token profiles for that chain right now — nothing was charged."
+          },
+          "503": {
+            "description": "Launch feed temporarily unavailable — nothing was charged."
+          }
+        },
+        "x-payment-info": {
+          "price": {
+            "currency": "USD",
+            "mode": "fixed",
+            "amount": "0.02"
+          },
+          "protocols": [
+            {
+              "x402": {}
+            }
+          ]
+        },
+        "security": []
+      }
+    },
+    "/v1/x402/predict/markets": {
+      "get": {
+        "summary": "Tracked Polymarket prediction markets with latest odds, paid per call via x402",
+        "description": "The Polymarket prediction markets HostDeFi tracks (top ~100 by 24h volume, sampled ~1/min by HostDeFi's own recorder from Polymarket's public Gamma API): market ids (conditionId), questions, slugs, end dates, 24h volume and the latest yes/no odds with sampling stats, most recently active first. Machine-payable: first call returns HTTP 402 with payment options; pay and retry with the X-PAYMENT header. Kill switch: when the lane is disabled server-side the route is absent (404) and never advertised in the catalog.",
+        "tags": [
+          "x402 (machine-payable)"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500
+            },
+            "description": "Max markets returned (default 100).",
+            "example": 100
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tracked-market list. Settled payment is confirmed by the X-PAYMENT-RESPONSE header and meta.x402.",
+            "headers": {
+              "X-PAYMENT-RESPONSE": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "base64-encoded JSON settlement receipt."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "markets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "marketId": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "slug": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "endDate": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "vol24h": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "points": {
+                            "type": "integer"
+                          },
+                          "firstTs": {
+                            "type": "integer"
+                          },
+                          "lastTs": {
+                            "type": "integer"
+                          },
+                          "yesUsd": {
+                            "type": "number",
+                            "nullable": true
+                          },
+                          "noUsd": {
+                            "type": "number",
+                            "nullable": true
+                          }
+                        }
+                      }
+                    },
+                    "meta": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts and retry."
+          },
+          "503": {
+            "description": "Prediction data temporarily unavailable — nothing was charged."
+          }
+        },
+        "x-payment-info": {
+          "price": {
+            "currency": "USD",
+            "mode": "fixed",
+            "amount": "0.005"
+          },
+          "protocols": [
+            {
+              "x402": {}
+            }
+          ]
+        },
+        "security": []
+      }
+    },
+    "/v1/x402/predict/history": {
+      "get": {
+        "summary": "24h odds history for one tracked Polymarket market, paid per call via x402",
+        "description": "One tracked Polymarket market's odds series: [ts, yesUsd, noUsd] points sampled ~1/min (dense recent hour, 5-min buckets older, ~24h horizon) into a normalized ready-to-chart array. History begins when HostDeFi first observes a market. Charge-on-success: an untracked market answers an uncharged 404.",
+        "tags": [
+          "x402 (machine-payable)"
+        ],
+        "parameters": [
+          {
+            "name": "marketId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Polymarket market id (conditionId, as listed by /v1/x402/predict/markets).",
+            "example": "0xabc123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The odds series. Settled payment is confirmed by the X-PAYMENT-RESPONSE header and meta.x402.",
+            "headers": {
+              "X-PAYMENT-RESPONSE": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "base64-encoded JSON settlement receipt."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "marketId": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "slug": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "endDate": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "points": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        }
+                      }
+                    },
+                    "meta": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts and retry."
+          },
+          "404": {
+            "description": "Market not tracked (history begins when HostDeFi first observes a market) — nothing was charged."
+          },
+          "503": {
+            "description": "Prediction data temporarily unavailable — nothing was charged."
+          }
+        },
+        "x-payment-info": {
+          "price": {
+            "currency": "USD",
+            "mode": "fixed",
+            "amount": "0.02"
+          },
+          "protocols": [
+            {
+              "x402": {}
+            }
+          ]
+        },
+        "security": []
       }
     }
   },
@@ -1954,7 +2702,7 @@
                 "items": {
                   "type": "string",
                   "enum": [
-                    "dexscreener",
+                    "geckoterminal",
                     "verixia-onchain",
                     "goplus"
                   ]
@@ -2350,7 +3098,7 @@
           "dataSources": {
             "type": "object",
             "properties": {
-              "dexScreener": {
+              "market": {
                 "type": "boolean"
               },
               "coinGecko": {

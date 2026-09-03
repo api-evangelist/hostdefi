@@ -1,0 +1,22 @@
+generated: '2026-09-03'
+method: searched
+source: https://hostdefi.com/docs/api/
+versioning:
+  scheme: uri-path
+  current: v1
+  docs: https://hostdefi.com/docs/api/
+host_guarantee: >-
+  The docs commit to the hostdefi.com base — "new code should use the hostdefi.com base — it is the
+  one we guarantee"; the legacy Railway origin (awake-integrity-production-faa0.up.railway.app)
+  "keeps working for existing integrations" but carries no guarantee. That is the closest thing to a
+  published deprecation posture: a named legacy host with a migration recommendation, no dated sunset.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: No formal deprecation policy or RFC 8594 Sunset/Deprecation header support is published.
+sla:
+  url: null
+  note: No SLA published. The fair-charging contract (x402 lanes charge only on delivered results) is the only published reliability commitment.
+status_page: null
+status_page_note: No status page found (hostdefi.com/status 404). GET /v1/health is the published liveness endpoint.
+deprecated_operations: []

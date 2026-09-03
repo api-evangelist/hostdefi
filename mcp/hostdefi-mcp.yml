@@ -1,0 +1,153 @@
+generated: '2026-09-03'
+method: searched
+status: published
+source: https://hostdefi.com/api/v1/mcp
+deployment:
+  mode: remote
+  endpoint: https://hostdefi.com/api/v1/mcp
+  auth: none
+  verified: probed
+  note: |-
+    Streamable-HTTP MCP server; tools/list answers anonymously (HTTP 200, 15 tools with full inputSchema). No key or OAuth: free tools (scan_token, get_x402_pricing) run unauthenticated; paid tools take an x402 USDC payment per call via the x402_payment argument, charge-on-success. buy_api_key mints a 30-day Agent-plan key with one $5 x402 payment — the agent can buy its own credential.
+server:
+  name: hostdefi
+  transport: http
+  url: https://hostdefi.com/api/v1/mcp
+tools:
+- name: scan_token
+  description: |-
+    FREE. HostDeFi token-safety scan — pass any token contract address (Solana mint or EVM address), or an exact token name/ticker: structured risk read with concerning/legitimate on-chain signals (authority state, liquidity, holder concentration, contract flags). No payment, no signup — fair use 100 checks/day per IP (the same free scanner as https://hostdefi.com/scan).
+  inputs:
+  - token
+  required:
+  - token
+- name: get_x402_pricing
+  description: 'FREE. The HostDeFi machine-payable price catalog: every paid resource, its USD price and settlement
+    rails.'
+- name: token_risk_verdict
+  description: |-
+    PAID ($0.02/call). HostDeFi A+–F token safety verdict by chain + address: grade, score, verdict prose, liquidity/holders/authority signals. Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - chain
+  - address
+  - x402_payment
+  required:
+  - chain
+  - address
+- name: token_risk_deep
+  description: |-
+    PAID ($0.25/call). Deep HostDeFi report in one call: the current A+-F verdict with authority/holder signals, the FULL dated safety history for the token, and a derived trend block (grade movement, liquidity trajectory, worst drawdown, days tracked). All figures are computed from recorded rows — no projections. History depth accrues from 2026-08-16. Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - chain
+  - address
+  - limit
+  - x402_payment
+  required:
+  - chain
+  - address
+- name: pregrad_signals
+  description: |-
+    PAID ($0.05/call). Pre-graduation on-chain signals for a Solana mint: bundled-launch detection, curve-aware holder concentration, Token-2022 traps, authority state. Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - mint
+  - x402_payment
+  required:
+  - mint
+- name: radar_alerts
+  description: |-
+    PAID ($0.01/call). Recent HostDeFi trend-radar alerts: big dated movers with real market cap, structured JSON. Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - limit
+  - x402_payment
+- name: x402_provider_risk
+  description: |-
+    PAID ($0.02/call). Vet an x402 seller BEFORE paying it: A–F grade from observable signals (402-spec fidelity, price sanity, payTo presence, TLS, latency), dated crawl snapshot. Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - resource
+  - x402_payment
+  required:
+  - resource
+- name: buy_api_key
+  description: |-
+    PAID ($5, one payment). Mint a 30-day HostDeFi Agent-plan API key (5,000 calls, batch enabled) — the key arrives in the paid response; no account, no signup. Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - x402_payment
+- name: swap_evm_quote
+  description: |-
+    PAID ($0.01/call). Executable EVM swap: a firm KyberSwap-routed quote plus a ready-to-sign transaction for the taker's OWN wallet — non-custodial, no key, no account. A 1% platform fee in the chain's native coin is priced into the returned transaction, on top of the swap. Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - chainId
+  - sellToken
+  - buyToken
+  - sellAmount
+  - taker
+  - ref
+  - x402_payment
+  required:
+  - chainId
+  - sellToken
+  - buyToken
+  - sellAmount
+  - taker
+- name: swap_evm_price
+  description: |-
+    PAID ($0.002/call). EVM swap price preview: expected and minimum output for a pair/amount before committing to a firm quote — the cheap look-before-you-swap call. Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - chainId
+  - sellToken
+  - buyToken
+  - sellAmount
+  - x402_payment
+  required:
+  - chainId
+  - sellToken
+  - buyToken
+  - sellAmount
+- name: token_report
+  description: |-
+    PAID ($0.35/call). HostDeFi full due-diligence report — one document: the A+–F verdict, on-chain signals (authority state, bundled-launch read, holder concentration, Token-2022 traps on Solana), the dated verdict-history series, trend-radar mentions and a rug-ledger cross-check. Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - chain
+  - address
+  - x402_payment
+  required:
+  - chain
+  - address
+- name: wallet_exposure
+  description: |-
+    PAID ($0.10/call). Wallet risk-exposure read for a Solana wallet: its largest holdings graded through the full verdict path, exposure counts by risk tier, and a rug-ledger symbol cross-check. Holdings exposure heuristics — NOT AML attribution or sanctions screening. Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - wallet
+  - x402_payment
+  required:
+  - wallet
+- name: token_launches
+  description: |-
+    PAID ($0.02/call). Fresh token launches with HostDeFi safety pre-reads baked in: newest token profiles annotated with authority state, bundled-launch flag, holder concentration and market depth — the clean flag is fail-closed (true only when every check is provably good). Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - chain
+  - limit
+  - x402_payment
+- name: predict_markets
+  description: |-
+    PAID ($0.005/call). Polymarket prediction markets HostDeFi tracks (top ~100 by 24h volume): market ids, questions, latest yes/no odds and sampling stats from HostDeFi's own recorded series. Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - limit
+  - x402_payment
+- name: predict_history
+  description: |-
+    PAID ($0.02/call). 24h odds history for one tracked Polymarket market: [ts, yesUsd, noUsd] points sampled ~1/min into a normalized series — one call, no auth juggling. An untracked market is an uncharged 404. Call once WITHOUT x402_payment to receive the x402 payment requirements (an `accepts` array); pay one of them with any x402 client/wallet, then call again with `x402_payment` set to the base64 X-PAYMENT payload. You are only charged when a result actually comes back.
+  inputs:
+  - marketId
+  - x402_payment
+  required:
+  - marketId
+x-evidence:
+  fetched: '2026-09-03'
+  url: https://hostdefi.com/api/v1/mcp
+  request: POST tools/list (JSON-RPC 2.0, anonymous)
+  http_status: 200
+  content_type: application/json
+  tool_count: 15
+  note: |-
+    Raw tools/list response saved verbatim at mcp/hostdefi-tools-list.json. Grew from 9 tools (2026-08) to 15 (2026-09): added token_risk_deep, token_report, wallet_exposure, token_launches, predict_markets, predict_history.

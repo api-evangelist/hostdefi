@@ -1,0 +1,30 @@
+generated: '2026-09-03'
+method: probed
+source: https://hostdefi.com/.well-known/agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: hostdefi.com
+  note: The identical card is also served at the legacy /.well-known/agent.json (byte-identical, HTTP 200).
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: 0.3.0
+  preferred_transport: JSONRPC
+  deviations: []
+card:
+  name: HostDeFi Token Risk API
+  url: https://hostdefi.com/api/v1/a2a
+  version: 1.2.0
+  skills: 7
+  file: hostdefi-agent-card.json
+  note: >-
+    One free A2A skill (token-safety-scan over message/send); the six paid skills are advertised in the
+    card but fulfilled over x402 HTTP or the hosted MCP server, not over A2A. The card carries a
+    non-standard `payments:` block pointing at the x402 discovery manifest and price sheet.
+x-evidence:
+  fetched: '2026-09-03'
+  url: https://hostdefi.com/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json
+  negative_control: /.well-known/hostdefi-negative-control-a91f3c2e.json returned 404 — the host is not a path-echoing catch-all.
