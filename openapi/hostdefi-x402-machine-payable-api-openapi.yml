@@ -2,18 +2,13 @@ openapi: 3.2.0
 info:
   title: HostDeFi Token Risk x402 (machine-payable) API
   version: 1.0.0
-  description: 'Public product surface of the scam-check-api service: the /v1 Token Risk API (same proprietary A+–F Safety
-    Read rendered on the HostDeFi token pages, plus pre-graduation on-chain signals for Solana), key purchase/usage endpoints,
-    and the free contract scanner at POST /analyze-token. Keyless callers get a per-IP fair-use tier of 100 calls/day on the
-    verdict endpoints; paid API keys (bought with SOL via POST /v1/keys) raise the quota and unlock batch. Send an API key
-    as the `x-api-key` header.'
+  description: 'Public product surface of the scam-check-api service: the /v1 Token Risk API (same proprietary A+–F Safety Read rendered on the HostDeFi token pages, plus pre-graduation on-chain signals for Solana), key purchase/usage endpoints, and the free contract scanner at POST /analyze-token. Keyless callers get a per-IP fair-use tier of 100 calls/day on the verdict endpoints; paid API keys (bought with SOL via POST /v1/keys) raise the quota and unlock batch. Send an API key as the `x-api-key` header.'
   contact:
     url: https://hostdefi.com/docs/api/
     email: trustdex.app@gmail.com
 servers:
 - url: https://hostdefi.com/api
-  description: 'Canonical branded base — /v1/* served via the hostdefi.com edge (use this in new integrations). Note: /analyze-token
-    is exposed here as POST /api/scan.'
+  description: 'Canonical branded base — /v1/* served via the hostdefi.com edge (use this in new integrations). Note: /analyze-token is exposed here as POST /api/scan.'
 - url: https://awake-integrity-production-faa0.up.railway.app
   description: Origin host (Railway) — keeps working for existing integrations; all paths incl. /analyze-token.
 security:
@@ -21,17 +16,12 @@ security:
 - ApiKeyHeader: []
 tags:
 - name: x402 (machine-payable)
-  description: 'Pay-per-call lane for AI agents (x402 protocol): no key, no account - pay USDC per request and get the same
-    A+-F Safety Read. Free tier and API-key plans are unchanged and remain the better per-call price for steady use.'
+  description: 'Pay-per-call lane for AI agents (x402 protocol): no key, no account - pay USDC per request and get the same A+-F Safety Read. Free tier and API-key plans are unchanged and remain the better per-call price for steady use.'
 paths:
   /v1/x402/token-risk/{chain}/{address}:
     get:
       summary: Token risk verdict, paid per call via x402
-      description: 'Machine-payable twin of the standard route for AI agents and bots: no key, no account, no signup. First
-        call returns HTTP 402 with payment options (x402 protocol v1, USDC on Solana via an accountless facilitator); pay
-        and retry with the X-PAYMENT header to receive the verdict. You are charged only when a verdict is actually returned:
-        server errors are never charged, and a failed settlement withholds the response. Prices: see GET /v1/x402/pricing.
-        The free tier (100/day/IP) and API keys remain the better deal for humans and steady integrations.'
+      description: 'Machine-payable twin of the standard route for AI agents and bots: no key, no account, no signup. First call returns HTTP 402 with payment options (x402 protocol v1, USDC on Solana via an accountless facilitator); pay and retry with the X-PAYMENT header to receive the verdict. You are charged only when a verdict is actually returned: server errors are never charged, and a failed settlement withholds the response. Prices: see GET /v1/x402/pricing. The free tier (100/day/IP) and API keys remain the better deal for humans and steady integrations.'
       tags:
       - x402 (machine-payable)
       parameters:
@@ -51,8 +41,7 @@ paths:
         example: DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263
       responses:
         '200':
-          description: 'Verdict. Settled payment is confirmed by the X-PAYMENT-RESPONSE header (base64 JSON: payer, transaction
-            signature, network) and meta.x402.'
+          description: 'Verdict. Settled payment is confirmed by the X-PAYMENT-RESPONSE header (base64 JSON: payer, transaction signature, network) and meta.x402.'
           headers:
             X-PAYMENT-RESPONSE:
               schema:
@@ -70,18 +59,16 @@ paths:
         price:
           currency: USD
           mode: fixed
-          amount: '0.01'
+          amount: '0.02'
         protocols:
         - x402: {}
       security: []
+      operationId: getV1X402TokenRiskByChainByAddress
+      x-operation-id-source: derived
   /v1/x402/token-risk/history/{chain}/{address}:
     get:
       summary: Token safety history (dated daily rows), paid per call via x402
-      description: 'Longitudinal safety series for one token: dated daily grade/score/liquidity/volume/price rows, oldest
-        first — how the risk picture changed, not just where it stands. Rows are recorded whenever a verdict is computed anywhere
-        on the API (recording began 2026-08-16), so any verdict call on a token starts its series. Machine-payable: first
-        call returns HTTP 402 with payment options; pay and retry with the X-PAYMENT header. Charged only when a non-empty
-        series is returned — a token with no recorded history answers an uncharged 404, and server errors are never charged.'
+      description: 'Longitudinal safety series for one token: dated daily grade/score/liquidity/volume/price rows, oldest first — how the risk picture changed, not just where it stands. Rows are recorded whenever a verdict is computed anywhere on the API (recording began 2026-08-16), so any verdict call on a token starts its series. Machine-payable: first call returns HTTP 402 with payment options; pay and retry with the X-PAYMENT header. Charged only when a non-empty series is returned — a token with no recorded history answers an uncharged 404, and server errors are never charged.'
       tags:
       - x402 (machine-payable)
       parameters:
@@ -110,8 +97,7 @@ paths:
         example: 90
       responses:
         '200':
-          description: The dated series. Settled payment is confirmed by the X-PAYMENT-RESPONSE header and meta.x402. Each
-            row carries the ts it was computed at.
+          description: The dated series. Settled payment is confirmed by the X-PAYMENT-RESPONSE header and meta.x402. Each row carries the ts it was computed at.
           headers:
             X-PAYMENT-RESPONSE:
               schema:
@@ -166,14 +152,101 @@ paths:
         protocols:
         - x402: {}
       security: []
+      operationId: getV1X402TokenRiskHistoryByChainByAddress
+      x-operation-id-source: derived
+  /v1/x402/token-risk/deep/{chain}/{address}:
+    get:
+      summary: Deep token report (verdict + full history + trend), paid per call via x402
+      description: 'Everything HostDeFi knows about one token in a single paid call: the current A+-F verdict with authority and holder-concentration signals and market structure, the full dated safety history from the verdict ledger, and a derived trend block — grade movement, liquidity trajectory, worst peak-to-trough drawdown and days tracked. The trend is arithmetic over recorded rows only: no projections, no inferred causes. Machine-payable: the first call returns HTTP 402 with payment options; pay and retry with the X-PAYMENT header. Charge-on-success: a verdict that cannot be computed is an uncharged 5xx and a missing address an uncharged 400. History depth accrues from 2026-08-16, so a newly-seen token legitimately has a short series — history.available and history.count say so in the response.'
+      tags:
+      - x402 (machine-payable)
+      parameters:
+      - name: chain
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Chain id, e.g. solana, ethereum, base, arbitrum.
+        example: solana
+      - name: address
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Token contract address (Solana mint or 0x EVM address; EVM matches case-insensitively).
+        example: DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 365
+        description: Daily history rows returned, oldest first (default 365 — depth is the point of this product).
+        example: 365
+      responses:
+        '200':
+          description: The dated series. Settled payment is confirmed by the X-PAYMENT-RESPONSE header and meta.x402. Each row carries the ts it was computed at.
+          headers:
+            X-PAYMENT-RESPONSE:
+              schema:
+                type: string
+              description: base64-encoded JSON settlement receipt.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  chain:
+                    type: string
+                  address:
+                    type: string
+                  count:
+                    type: integer
+                  rows:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        ts:
+                          type: string
+                        grade:
+                          type: string
+                          nullable: true
+                        score:
+                          type: number
+                          nullable: true
+                        liquidityUsd:
+                          type: number
+                          nullable: true
+                        volume24h:
+                          type: number
+                          nullable: true
+                        priceUsd:
+                          type: number
+                          nullable: true
+        '402':
+          $ref: '#/components/responses/X402PaymentRequired'
+        '404':
+          description: No recorded history for this token yet - nothing was charged. Any verdict call on it starts the series.
+        '503':
+          description: x402 lane disabled or facilitator unreachable - the free tier and API keys are unaffected.
+      x-payment-info:
+        price:
+          currency: USD
+          mode: fixed
+          amount: '0.02'
+        protocols:
+        - x402: {}
+      security: []
+      operationId: getV1X402TokenRiskDeepByChainByAddress
+      x-operation-id-source: derived
   /v1/x402/token-risk:
     post:
       summary: Token risk verdict by free-form query, paid per call via x402
-      description: 'Machine-payable twin of the standard route for AI agents and bots: no key, no account, no signup. First
-        call returns HTTP 402 with payment options (x402 protocol v1, USDC on Solana via an accountless facilitator); pay
-        and retry with the X-PAYMENT header to receive the verdict. You are charged only when a verdict is actually returned:
-        server errors are never charged, and a failed settlement withholds the response. Prices: see GET /v1/x402/pricing.
-        The free tier (100/day/IP) and API keys remain the better deal for humans and steady integrations.'
+      description: 'Machine-payable twin of the standard route for AI agents and bots: no key, no account, no signup. First call returns HTTP 402 with payment options (x402 protocol v1, USDC on Solana via an accountless facilitator); pay and retry with the X-PAYMENT header to receive the verdict. You are charged only when a verdict is actually returned: server errors are never charged, and a failed settlement withholds the response. Prices: see GET /v1/x402/pricing. The free tier (100/day/IP) and API keys remain the better deal for humans and steady integrations.'
       tags:
       - x402 (machine-payable)
       requestBody:
@@ -185,8 +258,7 @@ paths:
               properties:
                 query:
                   type: string
-                  description: A token contract address, or a name/ticker (resolved to the deepest-liquidity match). `address`
-                    is accepted as an alias.
+                  description: A token contract address, or a name/ticker (resolved to the deepest-liquidity match). `address` is accepted as an alias.
                 address:
                   type: string
                   description: Alias for `query`.
@@ -194,8 +266,7 @@ paths:
               query: BONK
       responses:
         '200':
-          description: 'Verdict. Settled payment is confirmed by the X-PAYMENT-RESPONSE header (base64 JSON: payer, transaction
-            signature, network) and meta.x402.'
+          description: 'Verdict. Settled payment is confirmed by the X-PAYMENT-RESPONSE header (base64 JSON: payer, transaction signature, network) and meta.x402.'
           headers:
             X-PAYMENT-RESPONSE:
               schema:
@@ -213,19 +284,16 @@ paths:
         price:
           currency: USD
           mode: fixed
-          amount: '0.01'
+          amount: '0.02'
         protocols:
         - x402: {}
       security: []
+      operationId: postV1X402TokenRisk
+      x-operation-id-source: derived
   /v1/x402/token-risk/batch:
     post:
       summary: Batch token risk verdicts, paid per call via x402
-      description: 'Machine-payable twin of the standard route for AI agents and bots: no key, no account, no signup. First
-        call returns HTTP 402 with payment options (x402 protocol v1, USDC on Solana via an accountless facilitator); pay
-        and retry with the X-PAYMENT header to receive the verdict. You are charged only when a verdict is actually returned:
-        server errors are never charged, and a failed settlement withholds the response. Prices: see GET /v1/x402/pricing.
-        The free tier (100/day/IP) and API keys remain the better deal for humans and steady integrations. Batch is a flat
-        price per call for up to 10 items - no Pro/Scale plan needed on this lane.'
+      description: 'Machine-payable twin of the standard route for AI agents and bots: no key, no account, no signup. First call returns HTTP 402 with payment options (x402 protocol v1, USDC on Solana via an accountless facilitator); pay and retry with the X-PAYMENT header to receive the verdict. You are charged only when a verdict is actually returned: server errors are never charged, and a failed settlement withholds the response. Prices: see GET /v1/x402/pricing. The free tier (100/day/IP) and API keys remain the better deal for humans and steady integrations. Batch is a flat price per call for up to 10 items - no Pro/Scale plan needed on this lane.'
       tags:
       - x402 (machine-payable)
       requestBody:
@@ -280,15 +348,16 @@ paths:
         price:
           currency: USD
           mode: fixed
-          amount: '0.08'
+          amount: '0.15'
         protocols:
         - x402: {}
       security: []
+      operationId: postV1X402TokenRiskBatch
+      x-operation-id-source: derived
   /v1/x402/pricing:
     get:
       summary: x402 price sheet and resource catalog
-      description: 'Machine-readable catalog of every x402-payable resource: price in USD, asset, scheme, and resource URL.
-        Also served as the discovery manifest at /.well-known/x402. No payment or auth required.'
+      description: 'Machine-readable catalog of every x402-payable resource: price in USD, asset, scheme, and resource URL. Also served as the discovery manifest at /.well-known/x402. No payment or auth required.'
       tags:
       - x402 (machine-payable)
       responses:
@@ -299,13 +368,12 @@ paths:
               schema:
                 type: object
       security: []
+      operationId: getV1X402Pricing
+      x-operation-id-source: derived
   /v1/x402/signals/solana/{mint}:
     get:
       summary: Pre-graduation signals for a Solana mint, paid per call via x402
-      description: 'The standalone premium signal set most risk APIs are blind to: bundled-launch detection, curve-aware top-holder
-        concentration, dangerous Token-2022 extensions, and mint/freeze authority state. You are charged only when data is
-        actually returned - 4xx/5xx outcomes are never settled. Pay-per-call via x402 (see the token-risk twin routes for
-        the flow).'
+      description: 'The standalone premium signal set most risk APIs are blind to: bundled-launch detection, curve-aware top-holder concentration, dangerous Token-2022 extensions, and mint/freeze authority state. You are charged only when data is actually returned - 4xx/5xx outcomes are never settled. Pay-per-call via x402 (see the token-risk twin routes for the flow).'
       tags:
       - x402 (machine-payable)
       parameters:
@@ -332,16 +400,16 @@ paths:
         price:
           currency: USD
           mode: fixed
-          amount: '0.03'
+          amount: '0.05'
         protocols:
         - x402: {}
       security: []
+      operationId: getV1X402SignalsSolanaByMint
+      x-operation-id-source: derived
   /v1/x402/authority/solana/{mint}:
     get:
       summary: Authority quick-check for a Solana mint, paid per call via x402
-      description: 'Cheap subset: mint/freeze authority state, dangerous Token-2022 extensions, top-10 holder concentration.
-        You are charged only when data is actually returned - 4xx/5xx outcomes are never settled. Pay-per-call via x402 (see
-        the token-risk twin routes for the flow).'
+      description: 'Cheap subset: mint/freeze authority state, dangerous Token-2022 extensions, top-10 holder concentration. You are charged only when data is actually returned - 4xx/5xx outcomes are never settled. Pay-per-call via x402 (see the token-risk twin routes for the flow).'
       tags:
       - x402 (machine-payable)
       parameters:
@@ -372,12 +440,12 @@ paths:
         protocols:
         - x402: {}
       security: []
+      operationId: getV1X402AuthoritySolanaByMint
+      x-operation-id-source: derived
   /v1/x402/portfolio:
     post:
       summary: Solana wallet portfolio audit, paid per call via x402
-      description: Pass { wallet } (a Solana address); the wallet's largest token holdings (up to 10, by token balance) each
-        get the full risk verdict. Flat price per audit. You are charged only when data is actually returned - 4xx/5xx outcomes
-        are never settled. Pay-per-call via x402 (see the token-risk twin routes for the flow).
+      description: Pass { wallet } (a Solana address); the wallet's largest token holdings (up to 10, by token balance) each get the full risk verdict. Flat price per audit. You are charged only when data is actually returned - 4xx/5xx outcomes are never settled. Pay-per-call via x402 (see the token-risk twin routes for the flow).
       tags:
       - x402 (machine-payable)
       requestBody:
@@ -409,17 +477,16 @@ paths:
         price:
           currency: USD
           mode: fixed
-          amount: '0.08'
+          amount: '0.15'
         protocols:
         - x402: {}
       security: []
+      operationId: postV1X402Portfolio
+      x-operation-id-source: derived
   /v1/x402/radar:
     get:
       summary: Recent trend-radar alerts, paid per call via x402
-      description: Structured JSON of the most recent HostDeFi trend-radar alerts (big dated movers with real market cap -
-        the same public alerts posted to the owned Telegram/Bluesky lanes). Query param limit (1-100, default 50). You are
-        charged only when data is actually returned - 4xx/5xx outcomes are never settled. Pay-per-call via x402 (see the token-risk
-        twin routes for the flow).
+      description: Structured JSON of the most recent HostDeFi trend-radar alerts (big dated movers with real market cap - the same public alerts posted to the owned Telegram/Bluesky lanes). Query param limit (1-100, default 50). You are charged only when data is actually returned - 4xx/5xx outcomes are never settled. Pay-per-call via x402 (see the token-risk twin routes for the flow).
       tags:
       - x402 (machine-payable)
       responses:
@@ -443,12 +510,12 @@ paths:
         protocols:
         - x402: {}
       security: []
+      operationId: getV1X402Radar
+      x-operation-id-source: derived
   /v1/x402/keys:
     post:
       summary: Buy a 30-day API key with one x402 payment
-      description: Mints a 30-day HostDeFi Agent-plan API key (5,000 calls, batch enabled) in exchange for a single x402 payment
-        - no account, no signup. The key arrives in the paid response body and is shown only once; send it as the x-api-key
-        header on /v1/* routes. Priced so raw per-call x402 stays the trial and the key is the volume deal.
+      description: Mints a 30-day HostDeFi Agent-plan API key (5,000 calls, batch enabled) in exchange for a single x402 payment - no account, no signup. The key arrives in the paid response body and is shown only once; send it as the x-api-key header on /v1/* routes. Priced so raw per-call x402 stays the trial and the key is the volume deal.
       tags:
       - x402 (machine-payable)
       x-payment-info:
@@ -470,12 +537,12 @@ paths:
         '500':
           description: Key issuance failed - nothing was charged.
       security: []
+      operationId: postV1X402Keys
+      x-operation-id-source: derived
   /v1/x402/obituaries:
     get:
       summary: Rug/collapse ledger (dated gate-exit records), paid per call via x402
-      description: 'HostDeFi''s rug/collapse ledger: tokens that fell out of the liquidity/holder data gate, with peak stats
-        and dated exit records, newest first. Every figure carries its snapshot date. You are charged only when data is actually
-        returned - 4xx/5xx outcomes are never settled.'
+      description: 'HostDeFi''s rug/collapse ledger: tokens that fell out of the liquidity/holder data gate, with peak stats and dated exit records, newest first. Every figure carries its snapshot date. You are charged only when data is actually returned - 4xx/5xx outcomes are never settled.'
       tags:
       - x402 (machine-payable)
       x-payment-info:
@@ -510,11 +577,12 @@ paths:
         '503':
           description: Data backend unavailable - nothing was charged.
       security: []
+      operationId: getV1X402Obituaries
+      x-operation-id-source: derived
   /v1/x402/listings/{chain}:
     get:
       summary: Graded token listing for one chain, paid per call via x402
-      description: 'The graded token listing for one chain from HostDeFi''s dated weekly safety snapshot: score, grade, reasons
-        and market structure per token, best-scored first. Unknown chains answer 400 before any payment starts.'
+      description: 'The graded token listing for one chain from HostDeFi''s dated weekly safety snapshot: score, grade, reasons and market structure per token, best-scored first. Unknown chains answer 400 before any payment starts.'
       tags:
       - x402 (machine-payable)
       x-payment-info:
@@ -557,11 +625,12 @@ paths:
         '503':
           description: Data backend unavailable - nothing was charged.
       security: []
+      operationId: getV1X402ListingsByChain
+      x-operation-id-source: derived
   /v1/x402/datasets/safety-snapshot:
     get:
       summary: The full weekly safety-snapshot dataset, paid per call via x402
-      description: 'The entire dated weekly safety-snapshot dataset in one call: every graded token across 4 chains plus authority
-        states, holder concentration and the gate-exit ledger. Large by design; the response carries its asOf date.'
+      description: 'The entire dated weekly safety-snapshot dataset in one call: every graded token across 4 chains plus authority states, holder concentration and the gate-exit ledger. Large by design; the response carries its asOf date.'
       tags:
       - x402 (machine-payable)
       x-payment-info:
@@ -589,11 +658,12 @@ paths:
         '503':
           description: Data backend unavailable - nothing was charged.
       security: []
+      operationId: getV1X402DatasetsSafetySnapshot
+      x-operation-id-source: derived
   /v1/x402/radar/history:
     get:
       summary: Full trend-radar alert history, paid per call via x402
-      description: The full retained trend-radar alert history (up to 100 dated entries), newest first - the same public alerts
-        posted to the owned distribution lanes, as structured JSON.
+      description: The full retained trend-radar alert history (up to 100 dated entries), newest first - the same public alerts posted to the owned distribution lanes, as structured JSON.
       tags:
       - x402 (machine-payable)
       x-payment-info:
@@ -615,12 +685,12 @@ paths:
         '503':
           description: Radar backend unavailable - nothing was charged.
       security: []
+      operationId: getV1X402RadarHistory
+      x-operation-id-source: derived
   /v1/x402/provider-risk:
     get:
       summary: Risk grade for one x402 seller, paid per call via x402
-      description: 'Vet an x402 seller BEFORE paying it: an A-F grade for one seller origin or resource URL, computed from
-        observable unpaid signals only (402-offer spec fidelity, price sanity, payTo presence, TLS, latency, reachability).
-        Answers from a dated crawl snapshot; unknown resources answer 404 uncharged - honest not-graded over fake confidence.'
+      description: 'Vet an x402 seller BEFORE paying it: an A-F grade for one seller origin or resource URL, computed from observable unpaid signals only (402-offer spec fidelity, price sanity, payTo presence, TLS, latency, reachability). Answers from a dated crawl snapshot; unknown resources answer 404 uncharged - honest not-graded over fake confidence.'
       tags:
       - x402 (machine-payable)
       x-payment-info:
@@ -639,8 +709,7 @@ paths:
         required: true
       responses:
         '200':
-          description: The grade, score and reasons, with the crawl's asOf date. Settlement receipt in the X-PAYMENT-RESPONSE
-            header.
+          description: The grade, score and reasons, with the crawl's asOf date. Settlement receipt in the X-PAYMENT-RESPONSE header.
           content:
             application/json:
               schema:
@@ -654,11 +723,12 @@ paths:
         '503':
           description: Dataset not ready yet - nothing was charged.
       security: []
+      operationId: getV1X402ProviderRisk
+      x-operation-id-source: derived
   /v1/x402/provider-risk/all:
     get:
       summary: The full x402 provider-risk dataset, paid per call via x402
-      description: 'The full dated x402 provider-risk crawl in one call: every crawled seller and resource with grade, score
-        and reasons - the trust layer for agents spending across the x402 ecosystem.'
+      description: 'The full dated x402 provider-risk crawl in one call: every crawled seller and resource with grade, score and reasons - the trust layer for agents spending across the x402 ecosystem.'
       tags:
       - x402 (machine-payable)
       x-payment-info:
@@ -680,6 +750,8 @@ paths:
         '503':
           description: Dataset not ready yet - nothing was charged.
       security: []
+      operationId: getV1X402ProviderRiskAll
+      x-operation-id-source: derived
   /v1/x402/swap/evm/quote:
     get:
       summary: Executable EVM swap quote (ready-to-sign tx), paid per call via x402
@@ -691,17 +763,12 @@ paths:
           amount: '0.01'
         protocols:
         - x402: {}
-      description: 'Firm KyberSwap-routed quote plus a ready-to-sign transaction for the taker''s own wallet - non-custodial,
-        no key, no account. Query params: chainId, sellToken and buyToken (''native'' or a 0x 40-hex address), sellAmount
-        (integer, base units), taker (0x address), optional ref (referrer 0x address). The returned transaction includes a
-        3% platform fee in the chain''s native coin, on top of the swap. Bad params answer 400 before any payment starts;
-        no-route and upstream errors pass through as 4xx/5xx and are never settled.'
+      description: 'Firm KyberSwap-routed quote plus a ready-to-sign transaction for the taker''s own wallet - non-custodial, no key, no account. Query params: chainId, sellToken and buyToken (''native'' or a 0x 40-hex address), sellAmount (integer, base units), taker (0x address), optional ref (referrer 0x address). The returned transaction includes a 1% platform fee in the chain''s native coin, on top of the swap. Bad params answer 400 before any payment starts; no-route and upstream errors pass through as 4xx/5xx and are never settled.'
       tags:
       - x402 (machine-payable)
       responses:
         '200':
-          description: Quote with executable tx (to, data, value), feeMode, allowanceTarget, gas figures. Settlement receipt
-            in the X-PAYMENT-RESPONSE header.
+          description: Quote with executable tx (to, data, value), feeMode, allowanceTarget, gas figures. Settlement receipt in the X-PAYMENT-RESPONSE header.
           content:
             application/json:
               schema:
@@ -714,6 +781,8 @@ paths:
           description: No route available for this pair - nothing was charged.
         '503':
           description: Backend not configured / temporarily unavailable - nothing was charged.
+      operationId: getV1X402SwapEvmQuote
+      x-operation-id-source: derived
   /v1/x402/swap/evm/price:
     get:
       summary: EVM swap price preview, paid per call via x402
@@ -725,9 +794,7 @@ paths:
           amount: '0.002'
         protocols:
         - x402: {}
-      description: 'Expected and minimum output for a pair/amount before committing to a firm quote. Query params: chainId,
-        sellToken, buyToken (''native'' or a 0x 40-hex address), sellAmount (integer, base units). A pair with no route answers
-        an uncharged 404 rather than a paid empty estimate.'
+      description: 'Expected and minimum output for a pair/amount before committing to a firm quote. Query params: chainId, sellToken, buyToken (''native'' or a 0x 40-hex address), sellAmount (integer, base units). A pair with no route answers an uncharged 404 rather than a paid empty estimate.'
       tags:
       - x402 (machine-payable)
       responses:
@@ -745,109 +812,12 @@ paths:
           description: No route or estimate for this pair - nothing was charged.
         '503':
           description: Backend not configured / temporarily unavailable - nothing was charged.
-  /v1/x402/token-risk/deep/{chain}/{address}:
-    get:
-      summary: Deep token report (verdict + full history + trend), paid per call via x402
-      description: 'Everything HostDeFi knows about one token in a single paid call: the current A+-F verdict with authority
-        and holder-concentration signals and market structure, the full dated safety history from the verdict ledger, and
-        a derived trend block — grade movement, liquidity trajectory, worst peak-to-trough drawdown and days tracked. The
-        trend is arithmetic over recorded rows only: no projections, no inferred causes. Machine-payable: the first call returns
-        HTTP 402 with payment options; pay and retry with the X-PAYMENT header. Charge-on-success: a verdict that cannot be
-        computed is an uncharged 5xx and a missing address an uncharged 400. History depth accrues from 2026-08-16, so a newly-seen
-        token legitimately has a short series — history.available and history.count say so in the response.'
-      tags:
-      - x402 (machine-payable)
-      parameters:
-      - name: chain
-        in: path
-        required: true
-        schema:
-          type: string
-        description: Chain id, e.g. solana, ethereum, base, arbitrum.
-        example: solana
-      - name: address
-        in: path
-        required: true
-        schema:
-          type: string
-        description: Token contract address (Solana mint or 0x EVM address; EVM matches case-insensitively).
-        example: DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 365
-        description: Daily history rows returned, oldest first (default 365 — depth is the point of this product).
-        example: 365
-      responses:
-        '200':
-          description: The dated series. Settled payment is confirmed by the X-PAYMENT-RESPONSE header and meta.x402. Each
-            row carries the ts it was computed at.
-          headers:
-            X-PAYMENT-RESPONSE:
-              schema:
-                type: string
-              description: base64-encoded JSON settlement receipt.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  ok:
-                    type: boolean
-                  chain:
-                    type: string
-                  address:
-                    type: string
-                  count:
-                    type: integer
-                  rows:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        ts:
-                          type: string
-                        grade:
-                          type: string
-                          nullable: true
-                        score:
-                          type: number
-                          nullable: true
-                        liquidityUsd:
-                          type: number
-                          nullable: true
-                        volume24h:
-                          type: number
-                          nullable: true
-                        priceUsd:
-                          type: number
-                          nullable: true
-        '402':
-          $ref: '#/components/responses/X402PaymentRequired'
-        '404':
-          description: No recorded history for this token yet - nothing was charged. Any verdict call on it starts the series.
-        '503':
-          description: x402 lane disabled or facilitator unreachable - the free tier and API keys are unaffected.
-      x-payment-info:
-        price:
-          currency: USD
-          mode: fixed
-          amount: '0.02'
-        protocols:
-        - x402: {}
-      security: []
+      operationId: getV1X402SwapEvmPrice
+      x-operation-id-source: derived
   /v1/x402/token-risk/report/{chain}/{address}:
     get:
-      summary: Full due-diligence report (verdict + signals + history + cross-checks), paid per call via x402
-      description: 'One document per token: the A+–F verdict with on-chain signals (authority state, bundled-launch read,
-        holder concentration, Token-2022 traps on Solana), the dated verdict-history series, trend-radar mentions and a rug-ledger
-        cross-check (symbol+chain — the ledger records no addresses, so a match is a flag to verify, never proof of identity),
-        plus a deterministic summary line. Machine-payable: first call returns HTTP 402 with payment options; pay and retry
-        with the X-PAYMENT header. The verdict is the report''s spine — its failure is an uncharged 5xx; auxiliary sections
-        fail soft inside the 200 and declare their absence in sectionErrors.'
+      summary: Full due-diligence report (verdict + signals + history + cross-checks), paid…
+      description: 'One document per token: the A+–F verdict with on-chain signals (authority state, bundled-launch read, holder concentration, Token-2022 traps on Solana), the dated verdict-history series, trend-radar mentions and a rug-ledger cross-check (symbol+chain — the ledger records no addresses, so a match is a flag to verify, never proof of identity), plus a deterministic summary line. Machine-payable: first call returns HTTP 402 with payment options; pay and retry with the X-PAYMENT header. The verdict is the report''s spine — its failure is an uncharged 5xx; auxiliary sections fail soft inside the 200 and declare their absence in sectionErrors.'
       tags:
       - x402 (machine-payable)
       parameters:
@@ -927,8 +897,7 @@ paths:
                   meta:
                     type: object
         '402':
-          description: 'Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts
-            and retry.'
+          description: 'Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts and retry.'
       x-payment-info:
         price:
           currency: USD
@@ -937,14 +906,12 @@ paths:
         protocols:
         - x402: {}
       security: []
+      operationId: getV1X402TokenRiskReportByChainByAddress
+      x-operation-id-source: derived
   /v1/x402/wallet:
     post:
       summary: Wallet risk-exposure read (Solana), paid per call via x402
-      description: 'The wallet''s largest token holdings (up to 10, by balance) graded through the full verdict path, exposure
-        counts by risk tier, a deterministic exposure grade (≥3 High → D · ≥1 High → C · unknowns outnumber graded → C · ≥1
-        Medium → B · else A) and a rug-ledger symbol cross-check. Holdings exposure heuristics — explicitly NOT AML attribution,
-        provenance tracing or sanctions screening. Charge-on-success: an empty wallet is an uncharged 404, an unreadable RPC
-        an uncharged 503.'
+      description: 'The wallet''s largest token holdings (up to 10, by balance) graded through the full verdict path, exposure counts by risk tier, a deterministic exposure grade (≥3 High → D · ≥1 High → C · unknowns outnumber graded → C · ≥1 Medium → B · else A) and a rug-ledger symbol cross-check. Holdings exposure heuristics — explicitly NOT AML attribution, provenance tracing or sanctions screening. Charge-on-success: an empty wallet is an uncharged 404, an unreadable RPC an uncharged 503.'
       tags:
       - x402 (machine-payable)
       requestBody:
@@ -1006,8 +973,7 @@ paths:
                   meta:
                     type: object
         '402':
-          description: 'Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts
-            and retry.'
+          description: 'Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts and retry.'
         '404':
           description: No token holdings found for that wallet — nothing was charged.
         '503':
@@ -1020,14 +986,12 @@ paths:
         protocols:
         - x402: {}
       security: []
+      operationId: postV1X402Wallet
+      x-operation-id-source: derived
   /v1/x402/launches:
     get:
       summary: Fresh token launches with safety pre-reads, paid per call via x402
-      description: 'The newest token profiles for a chain, each annotated with HostDeFi safety pre-reads: authority state,
-        bundled-launch flag, holder concentration and market depth, plus a fail-closed `clean` flag — true only when mint
-        AND freeze authorities are provably revoked, liquidity ≥ $25K and top-10 concentration ≤ 60% (an unknown is never
-        a pass; cleanReasons lists what failed or is unknown). Responses are cached ~60s server-side. Charge-on-success: an
-        empty chain answers an uncharged 404, an unavailable upstream an uncharged 503.'
+      description: 'The newest token profiles for a chain, each annotated with HostDeFi safety pre-reads: authority state, bundled-launch flag, holder concentration and market depth, plus a fail-closed `clean` flag — true only when mint AND freeze authorities are provably revoked, liquidity ≥ $25K and top-10 concentration ≤ 60% (an unknown is never a pass; cleanReasons lists what failed or is unknown). Responses are cached ~60s server-side. Charge-on-success: an empty chain answers an uncharged 404, an unavailable upstream an uncharged 503.'
       tags:
       - x402 (machine-payable)
       parameters:
@@ -1098,8 +1062,7 @@ paths:
                   meta:
                     type: object
         '402':
-          description: 'Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts
-            and retry.'
+          description: 'Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts and retry.'
         '404':
           description: No fresh token profiles for that chain right now — nothing was charged.
         '503':
@@ -1112,14 +1075,12 @@ paths:
         protocols:
         - x402: {}
       security: []
+      operationId: getV1X402Launches
+      x-operation-id-source: derived
   /v1/x402/predict/markets:
     get:
       summary: Tracked Polymarket prediction markets with latest odds, paid per call via x402
-      description: 'The Polymarket prediction markets HostDeFi tracks (top ~100 by 24h volume, sampled ~1/min by HostDeFi''s
-        own recorder from Polymarket''s public Gamma API): market ids (conditionId), questions, slugs, end dates, 24h volume
-        and the latest yes/no odds with sampling stats, most recently active first. Machine-payable: first call returns HTTP
-        402 with payment options; pay and retry with the X-PAYMENT header. Kill switch: when the lane is disabled server-side
-        the route is absent (404) and never advertised in the catalog.'
+      description: 'The Polymarket prediction markets HostDeFi tracks (top ~100 by 24h volume, sampled ~1/min by HostDeFi''s own recorder from Polymarket''s public Gamma API): market ids (conditionId), questions, slugs, end dates, 24h volume and the latest yes/no odds with sampling stats, most recently active first. Machine-payable: first call returns HTTP 402 with payment options; pay and retry with the X-PAYMENT header. Kill switch: when the lane is disabled server-side the route is absent (404) and never advertised in the catalog.'
       tags:
       - x402 (machine-payable)
       parameters:
@@ -1187,8 +1148,7 @@ paths:
                   meta:
                     type: object
         '402':
-          description: 'Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts
-            and retry.'
+          description: 'Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts and retry.'
         '503':
           description: Prediction data temporarily unavailable — nothing was charged.
       x-payment-info:
@@ -1199,12 +1159,12 @@ paths:
         protocols:
         - x402: {}
       security: []
+      operationId: getV1X402PredictMarkets
+      x-operation-id-source: derived
   /v1/x402/predict/history:
     get:
       summary: 24h odds history for one tracked Polymarket market, paid per call via x402
-      description: 'One tracked Polymarket market''s odds series: [ts, yesUsd, noUsd] points sampled ~1/min (dense recent
-        hour, 5-min buckets older, ~24h horizon) into a normalized ready-to-chart array. History begins when HostDeFi first
-        observes a market. Charge-on-success: an untracked market answers an uncharged 404.'
+      description: 'One tracked Polymarket market''s odds series: [ts, yesUsd, noUsd] points sampled ~1/min (dense recent hour, 5-min buckets older, ~24h horizon) into a normalized ready-to-chart array. History begins when HostDeFi first observes a market. Charge-on-success: an untracked market answers an uncharged 404.'
       tags:
       - x402 (machine-payable)
       parameters:
@@ -1254,8 +1214,7 @@ paths:
                   meta:
                     type: object
         '402':
-          description: 'Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts
-            and retry.'
+          description: 'Payment required: the x402 offer (v1 accepts body + v2 PAYMENT-REQUIRED header). Pay one of the accepts and retry.'
         '404':
           description: Market not tracked (history begins when HostDeFi first observes a market) — nothing was charged.
         '503':
@@ -1268,118 +1227,13 @@ paths:
         protocols:
         - x402: {}
       security: []
+      operationId: getV1X402PredictHistory
+      x-operation-id-source: derived
 components:
   schemas:
-    Verdict:
-      type: object
-      description: The graded Safety Read for one token — identical to the grade rendered on the HostDeFi token pages.
-      properties:
-        ok:
-          type: boolean
-          const: true
-        token:
-          type: object
-          properties:
-            chain:
-              type:
-              - string
-              - 'null'
-              description: Resolved chain id (e.g. solana, ethereum), or null if undeterminable.
-            address:
-              type: string
-            name:
-              type:
-              - string
-              - 'null'
-            symbol:
-              type:
-              - string
-              - 'null'
-        risk:
-          $ref: '#/components/schemas/RiskBlock'
-        signals:
-          description: Chain-dependent raw signals behind the grade.
-          oneOf:
-          - $ref: '#/components/schemas/SolanaSignals'
-          - $ref: '#/components/schemas/EvmSignals'
-        meta:
-          type: object
-          properties:
-            checkedAt:
-              type: string
-              format: date-time
-            sources:
-              type: array
-              items:
-                type: string
-                enum:
-                - dexscreener
-                - verixia-onchain
-                - goplus
-            partial:
-              type: boolean
-              description: True when the chain's security/authority source was unavailable and the verdict degraded rather
-                than blocked.
-            plan:
-              type: string
-              description: free, or the calling key's plan id (week/month/year). Not set on batch items (the batch envelope
-                carries it).
-            remaining:
-              type: integer
-              description: Calls remaining on the caller's tier. Not set on batch items.
-    EvmSignals:
-      type: object
-      description: EVM signal set (present when the token resolved to an EVM chain). `evmSecurity` is always emitted (all-null
-        flags when the security source was unavailable) and is what distinguishes this branch from SolanaSignals.
-      required:
-      - evmSecurity
-      properties:
-        market:
-          $ref: '#/components/schemas/MarketSignals'
-        evmSecurity:
-          type: object
-          description: Contract security flags. Null = the check could not be evaluated.
-          properties:
-            honeypot:
-              type:
-              - boolean
-              - 'null'
-            buyTaxPct:
-              type:
-              - integer
-              - 'null'
-            sellTaxPct:
-              type:
-              - integer
-              - 'null'
-            mintable:
-              type:
-              - boolean
-              - 'null'
-            pausable:
-              type:
-              - boolean
-              - 'null'
-            blacklist:
-              type:
-              - boolean
-              - 'null'
-            proxy:
-              type:
-              - boolean
-              - 'null'
-            hiddenOwner:
-              type:
-              - boolean
-              - 'null'
-            openSource:
-              type:
-              - boolean
-              - 'null'
     SolanaSignals:
       type: object
-      description: Solana signal set (present when the token resolved to Solana). `authorities` is always emitted (null-valued
-        when the on-chain read was unavailable) and is what distinguishes this branch from EvmSignals.
+      description: Solana signal set (present when the token resolved to Solana). `authorities` is always emitted (null-valued when the on-chain read was unavailable) and is what distinguishes this branch from EvmSignals.
       required:
       - authorities
       properties:
@@ -1440,10 +1294,57 @@ components:
               description: True when the token exists on-chain but has no DEX pair yet.
         market:
           $ref: '#/components/schemas/MarketSignals'
+    EvmSignals:
+      type: object
+      description: EVM signal set (present when the token resolved to an EVM chain). `evmSecurity` is always emitted (all-null flags when the security source was unavailable) and is what distinguishes this branch from SolanaSignals.
+      required:
+      - evmSecurity
+      properties:
+        market:
+          $ref: '#/components/schemas/MarketSignals'
+        evmSecurity:
+          type: object
+          description: Contract security flags. Null = the check could not be evaluated.
+          properties:
+            honeypot:
+              type:
+              - boolean
+              - 'null'
+            buyTaxPct:
+              type:
+              - integer
+              - 'null'
+            sellTaxPct:
+              type:
+              - integer
+              - 'null'
+            mintable:
+              type:
+              - boolean
+              - 'null'
+            pausable:
+              type:
+              - boolean
+              - 'null'
+            blacklist:
+              type:
+              - boolean
+              - 'null'
+            proxy:
+              type:
+              - boolean
+              - 'null'
+            hiddenOwner:
+              type:
+              - boolean
+              - 'null'
+            openSource:
+              type:
+              - boolean
+              - 'null'
     X402PaymentRequirements:
       type: object
-      description: 'One accepted payment option (x402 protocol v1, ''exact'' scheme). Amounts are atomic units of the asset
-        (USDC has 6 decimals: ''10000'' = $0.01).'
+      description: 'One accepted payment option (x402 protocol v1, ''exact'' scheme). Amounts are atomic units of the asset (USDC has 6 decimals: ''10000'' = $0.01).'
       properties:
         scheme:
           type: string
@@ -1474,10 +1375,37 @@ components:
         extra:
           type: object
           description: Scheme extras - on Solana includes the facilitator's feePayer.
+    MarketSignals:
+      type: object
+      properties:
+        liquidityUsd:
+          type:
+          - number
+          - 'null'
+        volume24h:
+          type:
+          - number
+          - 'null'
+        priceUsd:
+          type:
+          - number
+          - 'null'
+    X402Offer:
+      type: object
+      description: 'The 402 Payment Required body: retry the same request with an X-PAYMENT header (base64 JSON payment payload) built against one of the ''accepts'' options. Any standard x402 client handles this automatically.'
+      properties:
+        x402Version:
+          type: integer
+          example: 1
+        error:
+          type: string
+        accepts:
+          type: array
+          items:
+            $ref: '#/components/schemas/X402PaymentRequirements'
     RiskBlock:
       type: object
-      description: 'Graded verdict, or an honest refusal to grade (`graded: false`) when the token is too new or under-described
-        — the API never fakes a grade.'
+      description: 'Graded verdict, or an honest refusal to grade (`graded: false`) when the token is too new or under-described — the API never fakes a grade.'
       properties:
         graded:
           type: boolean
@@ -1487,8 +1415,7 @@ components:
           - 'null'
           minimum: 0
           maximum: 97
-          description: Safety score, higher is safer. The engine clamps emitted scores to 2–97 (a perfect score is unreachable
-            by design). Null when ungraded.
+          description: Safety score, higher is safer. The engine clamps emitted scores to 2–97 (a perfect score is unreachable by design). Null when ungraded.
         grade:
           type:
           - string
@@ -1532,39 +1459,64 @@ components:
           - string
           - 'null'
           description: Why no grade was emitted (only when graded is false).
-    X402Offer:
+    Verdict:
       type: object
-      description: 'The 402 Payment Required body: retry the same request with an X-PAYMENT header (base64 JSON payment payload)
-        built against one of the ''accepts'' options. Any standard x402 client handles this automatically.'
+      description: The graded Safety Read for one token — identical to the grade rendered on the HostDeFi token pages.
       properties:
-        x402Version:
-          type: integer
-          example: 1
-        error:
-          type: string
-        accepts:
-          type: array
-          items:
-            $ref: '#/components/schemas/X402PaymentRequirements'
-    MarketSignals:
-      type: object
-      properties:
-        liquidityUsd:
-          type:
-          - number
-          - 'null'
-        volume24h:
-          type:
-          - number
-          - 'null'
-        priceUsd:
-          type:
-          - number
-          - 'null'
+        ok:
+          type: boolean
+          const: true
+        token:
+          type: object
+          properties:
+            chain:
+              type:
+              - string
+              - 'null'
+              description: Resolved chain id (e.g. solana, ethereum), or null if undeterminable.
+            address:
+              type: string
+            name:
+              type:
+              - string
+              - 'null'
+            symbol:
+              type:
+              - string
+              - 'null'
+        risk:
+          $ref: '#/components/schemas/RiskBlock'
+        signals:
+          description: Chain-dependent raw signals behind the grade.
+          oneOf:
+          - $ref: '#/components/schemas/SolanaSignals'
+          - $ref: '#/components/schemas/EvmSignals'
+        meta:
+          type: object
+          properties:
+            checkedAt:
+              type: string
+              format: date-time
+            sources:
+              type: array
+              items:
+                type: string
+                enum:
+                - geckoterminal
+                - verixia-onchain
+                - goplus
+            partial:
+              type: boolean
+              description: True when the chain's security/authority source was unavailable and the verdict degraded rather than blocked.
+            plan:
+              type: string
+              description: free, or the calling key's plan id (week/month/year). Not set on batch items (the batch envelope carries it).
+            remaining:
+              type: integer
+              description: Calls remaining on the caller's tier. Not set on batch items.
   responses:
     X402PaymentRequired:
-      description: Payment required (or payment invalid / settlement failed). Body carries the x402 v1 offer; pay and retry
-        with the X-PAYMENT header.
+      description: Payment required (or payment invalid / settlement failed). Body carries the x402 v1 offer; pay and retry with the X-PAYMENT header.
       content:
         application/json:
           schema:
@@ -1574,5 +1526,4 @@ components:
       type: apiKey
       in: header
       name: x-api-key
-      description: API key from POST /v1/keys (vx_ + 32 hex chars). Omit it to use the keyless free tier (100 calls/day per
-        IP).
+      description: API key from POST /v1/keys (vx_ + 32 hex chars). Omit it to use the keyless free tier (100 calls/day per IP).

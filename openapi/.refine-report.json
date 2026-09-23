@@ -1,7 +1,7 @@
 {
   "provider": "hostdefi",
   "sources": [
-    "hostdefi-token-risk-api-openapi.yml"
+    "_original/hostdefi-openapi.json"
   ],
   "outputs": [
     "hostdefi-analyze-token-api-openapi.yml",
@@ -16,22 +16,31 @@
   "errors": [],
   "warnings": [],
   "notes": [
-    "hostdefi-token-risk-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "hostdefi-token-risk-api-openapi.yml: tagged paths GET /v1/token-risk/{chain}/{address} -> Token Risk",
-    "hostdefi-token-risk-api-openapi.yml: tagged paths POST /v1/token-risk -> Token Risk",
-    "hostdefi-token-risk-api-openapi.yml: tagged paths POST /v1/token-risk/batch -> Token Risk",
-    "hostdefi-token-risk-api-openapi.yml: tagged paths POST /v1/keys -> Keys",
-    "hostdefi-token-risk-api-openapi.yml: tagged paths GET /v1/usage -> Usage",
-    "hostdefi-token-risk-api-openapi.yml: tagged paths GET /v1/health -> Health",
-    "hostdefi-token-risk-api-openapi.yml: tagged paths POST /analyze-token -> Analyze Token",
-    "hostdefi-token-risk-api-openapi.yml: tagged paths POST /scan -> Scan",
-    "hostdefi-token-risk-api-openapi.yml: declared missing tag: Analyze Token",
-    "hostdefi-token-risk-api-openapi.yml: declared missing tag: Health",
-    "hostdefi-token-risk-api-openapi.yml: declared missing tag: Keys",
-    "hostdefi-token-risk-api-openapi.yml: declared missing tag: Scan",
-    "hostdefi-token-risk-api-openapi.yml: declared missing tag: Token Risk",
-    "hostdefi-token-risk-api-openapi.yml: declared missing tag: Usage",
-    "apis.yml register: written (+6 apis, 7 total)"
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "hostdefi-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "hostdefi-openapi.json: tagged paths GET /v1/token-risk/{chain}/{address} -> Token Risk",
+    "hostdefi-openapi.json: tagged paths POST /v1/token-risk -> Token Risk",
+    "hostdefi-openapi.json: tagged paths POST /v1/token-risk/batch -> Token Risk",
+    "hostdefi-openapi.json: tagged paths POST /v1/keys -> Keys",
+    "hostdefi-openapi.json: tagged paths GET /v1/usage -> Usage",
+    "hostdefi-openapi.json: tagged paths GET /v1/health -> Health",
+    "hostdefi-openapi.json: tagged paths POST /analyze-token -> Analyze Token",
+    "hostdefi-openapi.json: tagged paths POST /scan -> Scan",
+    "hostdefi-openapi.json: declared missing tag: Analyze Token",
+    "hostdefi-openapi.json: declared missing tag: Health",
+    "hostdefi-openapi.json: declared missing tag: Keys",
+    "hostdefi-openapi.json: declared missing tag: Scan",
+    "hostdefi-openapi.json: declared missing tag: Token Risk",
+    "hostdefi-openapi.json: declared missing tag: Usage",
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "hostdefi-analyze-token-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "hostdefi-health-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "hostdefi-keys-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "hostdefi-scan-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "hostdefi-token-risk-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "hostdefi-usage-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "hostdefi-x402-machine-payable-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

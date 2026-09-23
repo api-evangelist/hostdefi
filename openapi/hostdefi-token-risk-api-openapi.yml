@@ -184,142 +184,6 @@ paths:
       - Token Risk
 components:
   schemas:
-    Verdict:
-      type: object
-      description: The graded Safety Read for one token — identical to the grade rendered on the HostDeFi token pages.
-      properties:
-        ok:
-          type: boolean
-          const: true
-        token:
-          type: object
-          properties:
-            chain:
-              type:
-              - string
-              - 'null'
-              description: Resolved chain id (e.g. solana, ethereum), or null if undeterminable.
-            address:
-              type: string
-            name:
-              type:
-              - string
-              - 'null'
-            symbol:
-              type:
-              - string
-              - 'null'
-        risk:
-          $ref: '#/components/schemas/RiskBlock'
-        signals:
-          description: Chain-dependent raw signals behind the grade.
-          oneOf:
-          - $ref: '#/components/schemas/SolanaSignals'
-          - $ref: '#/components/schemas/EvmSignals'
-        meta:
-          type: object
-          properties:
-            checkedAt:
-              type: string
-              format: date-time
-            sources:
-              type: array
-              items:
-                type: string
-                enum:
-                - dexscreener
-                - verixia-onchain
-                - goplus
-            partial:
-              type: boolean
-              description: True when the chain's security/authority source was unavailable and the verdict degraded rather than blocked.
-            plan:
-              type: string
-              description: free, or the calling key's plan id (week/month/year). Not set on batch items (the batch envelope carries it).
-            remaining:
-              type: integer
-              description: Calls remaining on the caller's tier. Not set on batch items.
-    V1ErrorBody:
-      type: object
-      properties:
-        ok:
-          type: boolean
-          const: false
-        error:
-          type: string
-        pending:
-          type: boolean
-          description: Present on 202 from /v1/keys while the payment is unconfirmed.
-        resetsAt:
-          type: integer
-          description: Unix ms timestamp when the limit resets (present on some 429s).
-        details:
-          type: string
-      required:
-      - ok
-      - error
-    EvmSignals:
-      type: object
-      description: EVM signal set (present when the token resolved to an EVM chain). `evmSecurity` is always emitted (all-null flags when the security source was unavailable) and is what distinguishes this branch from SolanaSignals.
-      required:
-      - evmSecurity
-      properties:
-        market:
-          $ref: '#/components/schemas/MarketSignals'
-        evmSecurity:
-          type: object
-          description: Contract security flags. Null = the check could not be evaluated.
-          properties:
-            honeypot:
-              type:
-              - boolean
-              - 'null'
-            buyTaxPct:
-              type:
-              - integer
-              - 'null'
-            sellTaxPct:
-              type:
-              - integer
-              - 'null'
-            mintable:
-              type:
-              - boolean
-              - 'null'
-            pausable:
-              type:
-              - boolean
-              - 'null'
-            blacklist:
-              type:
-              - boolean
-              - 'null'
-            proxy:
-              type:
-              - boolean
-              - 'null'
-            hiddenOwner:
-              type:
-              - boolean
-              - 'null'
-            openSource:
-              type:
-              - boolean
-              - 'null'
-    BatchItemError:
-      type: object
-      description: Per-item failure inside a batch — the other items still return verdicts.
-      properties:
-        ok:
-          type: boolean
-          const: false
-        error:
-          type: string
-        details:
-          type: string
-      required:
-      - ok
-      - error
     SolanaSignals:
       type: object
       description: Solana signal set (present when the token resolved to Solana). `authorities` is always emitted (null-valued when the on-chain read was unavailable) and is what distinguishes this branch from EvmSignals.
@@ -383,6 +247,102 @@ components:
               description: True when the token exists on-chain but has no DEX pair yet.
         market:
           $ref: '#/components/schemas/MarketSignals'
+    BatchItemError:
+      type: object
+      description: Per-item failure inside a batch — the other items still return verdicts.
+      properties:
+        ok:
+          type: boolean
+          const: false
+        error:
+          type: string
+        details:
+          type: string
+      required:
+      - ok
+      - error
+    EvmSignals:
+      type: object
+      description: EVM signal set (present when the token resolved to an EVM chain). `evmSecurity` is always emitted (all-null flags when the security source was unavailable) and is what distinguishes this branch from SolanaSignals.
+      required:
+      - evmSecurity
+      properties:
+        market:
+          $ref: '#/components/schemas/MarketSignals'
+        evmSecurity:
+          type: object
+          description: Contract security flags. Null = the check could not be evaluated.
+          properties:
+            honeypot:
+              type:
+              - boolean
+              - 'null'
+            buyTaxPct:
+              type:
+              - integer
+              - 'null'
+            sellTaxPct:
+              type:
+              - integer
+              - 'null'
+            mintable:
+              type:
+              - boolean
+              - 'null'
+            pausable:
+              type:
+              - boolean
+              - 'null'
+            blacklist:
+              type:
+              - boolean
+              - 'null'
+            proxy:
+              type:
+              - boolean
+              - 'null'
+            hiddenOwner:
+              type:
+              - boolean
+              - 'null'
+            openSource:
+              type:
+              - boolean
+              - 'null'
+    V1ErrorBody:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          const: false
+        error:
+          type: string
+        pending:
+          type: boolean
+          description: Present on 202 from /v1/keys while the payment is unconfirmed.
+        resetsAt:
+          type: integer
+          description: Unix ms timestamp when the limit resets (present on some 429s).
+        details:
+          type: string
+      required:
+      - ok
+      - error
+    MarketSignals:
+      type: object
+      properties:
+        liquidityUsd:
+          type:
+          - number
+          - 'null'
+        volume24h:
+          type:
+          - number
+          - 'null'
+        priceUsd:
+          type:
+          - number
+          - 'null'
     RiskBlock:
       type: object
       description: 'Graded verdict, or an honest refusal to grade (`graded: false`) when the token is too new or under-described — the API never fakes a grade.'
@@ -439,30 +399,70 @@ components:
           - string
           - 'null'
           description: Why no grade was emitted (only when graded is false).
-    MarketSignals:
+    Verdict:
       type: object
+      description: The graded Safety Read for one token — identical to the grade rendered on the HostDeFi token pages.
       properties:
-        liquidityUsd:
-          type:
-          - number
-          - 'null'
-        volume24h:
-          type:
-          - number
-          - 'null'
-        priceUsd:
-          type:
-          - number
-          - 'null'
+        ok:
+          type: boolean
+          const: true
+        token:
+          type: object
+          properties:
+            chain:
+              type:
+              - string
+              - 'null'
+              description: Resolved chain id (e.g. solana, ethereum), or null if undeterminable.
+            address:
+              type: string
+            name:
+              type:
+              - string
+              - 'null'
+            symbol:
+              type:
+              - string
+              - 'null'
+        risk:
+          $ref: '#/components/schemas/RiskBlock'
+        signals:
+          description: Chain-dependent raw signals behind the grade.
+          oneOf:
+          - $ref: '#/components/schemas/SolanaSignals'
+          - $ref: '#/components/schemas/EvmSignals'
+        meta:
+          type: object
+          properties:
+            checkedAt:
+              type: string
+              format: date-time
+            sources:
+              type: array
+              items:
+                type: string
+                enum:
+                - geckoterminal
+                - verixia-onchain
+                - goplus
+            partial:
+              type: boolean
+              description: True when the chain's security/authority source was unavailable and the verdict degraded rather than blocked.
+            plan:
+              type: string
+              description: free, or the calling key's plan id (week/month/year). Not set on batch items (the batch envelope carries it).
+            remaining:
+              type: integer
+              description: Calls remaining on the caller's tier. Not set on batch items.
   responses:
-    V1RateLimited:
-      description: 'Rate limited: keyless daily fair-use reached, plan quota reached, or per-key burst ceiling (~5 req/s). `Cache-Control: no-store`.'
+    V1Error:
+      description: 'Error. `Cache-Control: no-store`.'
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/V1ErrorBody'
-    V1Error:
-      description: 'Error. `Cache-Control: no-store`.'
+    V1RateLimited:
+      description: 'Rate limited: keyless daily fair-use reached, plan quota reached, or per-key burst ceiling (~5 req/s). `Cache-Control: no-store`.'
       content:
         application/json:
           schema:

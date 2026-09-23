@@ -23,7 +23,7 @@ paths:
       description: Railway origin only — this path is not proxied on the branded base. On hostdefi.com the same handler is POST /api/scan (the /scan entry in this spec).
     post:
       summary: Free contract scanner (100/day/IP fair-use, no key required)
-      description: The free web scanner behind the HostDeFi token pages. No paywall — the per-IP fair-use cap of 100 checks/day (honest 429) is the only limiter. Accepts a contract address, or an exact token name/ticker (resolved to the top-liquidity match). Response combines an AI risk narrative (with a deterministic data-driven fallback when the AI budget is exhausted) with DexScreener/CoinGecko market metrics and on-chain contract permission reads.
+      description: The free web scanner behind the HostDeFi token pages. No paywall — the per-IP fair-use cap of 100 checks/day (honest 429) is the only limiter. Accepts a contract address, or an exact token name/ticker (resolved to the top-liquidity match). Response combines an AI risk narrative (with a deterministic data-driven fallback when the AI budget is exhausted) with GeckoTerminal/CoinGecko market metrics and on-chain contract permission reads.
       operationId: postAnalyzeToken
       requestBody:
         required: true
@@ -57,6 +57,24 @@ paths:
       - Analyze Token
 components:
   responses:
+    ScannerBadRequest:
+      description: Missing or unrecognized input.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScannerError'
+    ScannerTimeout:
+      description: Analysis timed out.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScannerError'
+    ScannerResult:
+      description: Analysis result.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AnalyzeTokenResult'
     ScannerServerError:
       description: Server error.
       content:
@@ -66,26 +84,8 @@ components:
             properties:
               error:
                 type: string
-    ScannerResult:
-      description: Analysis result.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/AnalyzeTokenResult'
-    ScannerTimeout:
-      description: Analysis timed out.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ScannerError'
     ScannerRateLimited:
       description: Fair-use cap reached (100 free checks/day per IP; resets within 24h).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ScannerError'
-    ScannerBadRequest:
-      description: Missing or unrecognized input.
       content:
         application/json:
           schema:
@@ -174,7 +174,7 @@ components:
         dataSources:
           type: object
           properties:
-            dexScreener:
+            market:
               type: boolean
             coinGecko:
               type: boolean

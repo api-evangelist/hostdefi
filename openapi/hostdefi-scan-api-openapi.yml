@@ -57,6 +57,24 @@ paths:
       - Scan
 components:
   responses:
+    ScannerBadRequest:
+      description: Missing or unrecognized input.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScannerError'
+    ScannerTimeout:
+      description: Analysis timed out.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScannerError'
+    ScannerResult:
+      description: Analysis result.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AnalyzeTokenResult'
     ScannerServerError:
       description: Server error.
       content:
@@ -66,26 +84,8 @@ components:
             properties:
               error:
                 type: string
-    ScannerResult:
-      description: Analysis result.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/AnalyzeTokenResult'
-    ScannerTimeout:
-      description: Analysis timed out.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ScannerError'
     ScannerRateLimited:
       description: Fair-use cap reached (100 free checks/day per IP; resets within 24h).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ScannerError'
-    ScannerBadRequest:
-      description: Missing or unrecognized input.
       content:
         application/json:
           schema:
@@ -174,7 +174,7 @@ components:
         dataSources:
           type: object
           properties:
-            dexScreener:
+            market:
               type: boolean
             coinGecko:
               type: boolean
