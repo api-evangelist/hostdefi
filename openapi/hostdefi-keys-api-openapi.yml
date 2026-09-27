@@ -103,13 +103,6 @@ paths:
       tags:
       - Keys
 components:
-  responses:
-    V1Error:
-      description: 'Error. `Cache-Control: no-store`.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/V1ErrorBody'
   schemas:
     V1ErrorBody:
       type: object
@@ -130,6 +123,13 @@ components:
       required:
       - ok
       - error
+  responses:
+    V1Error:
+      description: 'Error. `Cache-Control: no-store`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/V1ErrorBody'
   securitySchemes:
     ApiKeyHeader:
       type: apiKey

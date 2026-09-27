@@ -39,12 +39,14 @@ tags:
 - DeFi
 - rug pull
 - x402
+- A2A
 tags_raw:
 - solana
 - token risk
 - defi
 - rug pull
 - x402
+- A2A
 apis:
 - aid: hostdefi:hostdefi-token-risk-api
   name: HostDeFi Token Risk API
@@ -201,3 +203,10 @@ x-enrichment:
   status: enriched
   artifacts_added: 25
   pass: local-v2
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://hostdefi.com/.well-known/agent-card.json"
+  grade: "conformant"
+  protocol_version: "0.3.0"
+  control: 404
