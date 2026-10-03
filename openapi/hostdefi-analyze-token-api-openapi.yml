@@ -57,6 +57,24 @@ paths:
       - Analyze Token
 components:
   responses:
+    ScannerBadRequest:
+      description: Missing or unrecognized input.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScannerError'
+    ScannerNotFound:
+      description: No DEX data found for that address.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScannerError'
+    ScannerTimeout:
+      description: Analysis timed out.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScannerError'
     ScannerRateLimited:
       description: Fair-use cap reached (100 free checks/day per IP; resets within 24h).
       content:
@@ -69,24 +87,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/AnalyzeTokenResult'
-    ScannerBadRequest:
-      description: Missing or unrecognized input.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ScannerError'
-    ScannerTimeout:
-      description: Analysis timed out.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ScannerError'
-    ScannerNotFound:
-      description: No DEX data found for that address.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ScannerError'
     ScannerServerError:
       description: Server error.
       content:
