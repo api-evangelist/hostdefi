@@ -183,144 +183,20 @@ paths:
       tags:
       - Token Risk
 components:
+  responses:
+    V1Error:
+      description: 'Error. `Cache-Control: no-store`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/V1ErrorBody'
+    V1RateLimited:
+      description: 'Rate limited: keyless daily fair-use reached, plan quota reached, or per-key burst ceiling (~5 req/s). `Cache-Control: no-store`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/V1ErrorBody'
   schemas:
-    EvmSignals:
-      type: object
-      description: EVM signal set (present when the token resolved to an EVM chain). `evmSecurity` is always emitted (all-null flags when the security source was unavailable) and is what distinguishes this branch from SolanaSignals.
-      required:
-      - evmSecurity
-      properties:
-        market:
-          $ref: '#/components/schemas/MarketSignals'
-        evmSecurity:
-          type: object
-          description: Contract security flags. Null = the check could not be evaluated.
-          properties:
-            honeypot:
-              type:
-              - boolean
-              - 'null'
-            buyTaxPct:
-              type:
-              - integer
-              - 'null'
-            sellTaxPct:
-              type:
-              - integer
-              - 'null'
-            mintable:
-              type:
-              - boolean
-              - 'null'
-            pausable:
-              type:
-              - boolean
-              - 'null'
-            blacklist:
-              type:
-              - boolean
-              - 'null'
-            proxy:
-              type:
-              - boolean
-              - 'null'
-            hiddenOwner:
-              type:
-              - boolean
-              - 'null'
-            openSource:
-              type:
-              - boolean
-              - 'null'
-    BatchItemError:
-      type: object
-      description: Per-item failure inside a batch — the other items still return verdicts.
-      properties:
-        ok:
-          type: boolean
-          const: false
-        error:
-          type: string
-        details:
-          type: string
-      required:
-      - ok
-      - error
-    RiskBlock:
-      type: object
-      description: 'Graded verdict, or an honest refusal to grade (`graded: false`) when the token is too new or under-described — the API never fakes a grade.'
-      properties:
-        graded:
-          type: boolean
-        score:
-          type:
-          - integer
-          - 'null'
-          minimum: 0
-          maximum: 97
-          description: Safety score, higher is safer. The engine clamps emitted scores to 2–97 (a perfect score is unreachable by design). Null when ungraded.
-        grade:
-          type:
-          - string
-          - 'null'
-          enum:
-          - A+
-          - A
-          - B
-          - C
-          - D
-          - F
-          - null
-          description: Letter grade band over the score (A+ ≥ 90, A ≥ 82, B ≥ 72, C ≥ 60, D ≥ 35, else F).
-        tier:
-          type:
-          - string
-          - 'null'
-          enum:
-          - low
-          - med
-          - high
-          - null
-          description: 'Risk tier: low (A+/A/B), med (C), high (D/F).'
-        verdict:
-          type:
-          - string
-          - 'null'
-          description: Deterministic one-paragraph verdict prose (no LLM involved).
-        knowns:
-          type: array
-          items:
-            type: string
-          description: Verified facts the grade rests on.
-        unknowns:
-          type: array
-          items:
-            type: string
-          description: Checks that could not be verified.
-        notGradedReason:
-          type:
-          - string
-          - 'null'
-          description: Why no grade was emitted (only when graded is false).
-    V1ErrorBody:
-      type: object
-      properties:
-        ok:
-          type: boolean
-          const: false
-        error:
-          type: string
-        pending:
-          type: boolean
-          description: Present on 202 from /v1/keys while the payment is unconfirmed.
-        resetsAt:
-          type: integer
-          description: Unix ms timestamp when the limit resets (present on some 429s).
-        details:
-          type: string
-      required:
-      - ok
-      - error
     SolanaSignals:
       type: object
       description: Solana signal set (present when the token resolved to Solana). `authorities` is always emitted (null-valued when the on-chain read was unavailable) and is what distinguishes this branch from EvmSignals.
@@ -384,21 +260,6 @@ components:
               description: True when the token exists on-chain but has no DEX pair yet.
         market:
           $ref: '#/components/schemas/MarketSignals'
-    MarketSignals:
-      type: object
-      properties:
-        liquidityUsd:
-          type:
-          - number
-          - 'null'
-        volume24h:
-          type:
-          - number
-          - 'null'
-        priceUsd:
-          type:
-          - number
-          - 'null'
     Verdict:
       type: object
       description: The graded Safety Read for one token — identical to the grade rendered on the HostDeFi token pages.
@@ -454,19 +315,158 @@ components:
             remaining:
               type: integer
               description: Calls remaining on the caller's tier. Not set on batch items.
-  responses:
-    V1Error:
-      description: 'Error. `Cache-Control: no-store`.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/V1ErrorBody'
-    V1RateLimited:
-      description: 'Rate limited: keyless daily fair-use reached, plan quota reached, or per-key burst ceiling (~5 req/s). `Cache-Control: no-store`.'
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/V1ErrorBody'
+    BatchItemError:
+      type: object
+      description: Per-item failure inside a batch — the other items still return verdicts.
+      properties:
+        ok:
+          type: boolean
+          const: false
+        error:
+          type: string
+        details:
+          type: string
+      required:
+      - ok
+      - error
+    MarketSignals:
+      type: object
+      properties:
+        liquidityUsd:
+          type:
+          - number
+          - 'null'
+        volume24h:
+          type:
+          - number
+          - 'null'
+        priceUsd:
+          type:
+          - number
+          - 'null'
+    V1ErrorBody:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          const: false
+        error:
+          type: string
+        pending:
+          type: boolean
+          description: Present on 202 from /v1/keys while the payment is unconfirmed.
+        resetsAt:
+          type: integer
+          description: Unix ms timestamp when the limit resets (present on some 429s).
+        details:
+          type: string
+      required:
+      - ok
+      - error
+    EvmSignals:
+      type: object
+      description: EVM signal set (present when the token resolved to an EVM chain). `evmSecurity` is always emitted (all-null flags when the security source was unavailable) and is what distinguishes this branch from SolanaSignals.
+      required:
+      - evmSecurity
+      properties:
+        market:
+          $ref: '#/components/schemas/MarketSignals'
+        evmSecurity:
+          type: object
+          description: Contract security flags. Null = the check could not be evaluated.
+          properties:
+            honeypot:
+              type:
+              - boolean
+              - 'null'
+            buyTaxPct:
+              type:
+              - integer
+              - 'null'
+            sellTaxPct:
+              type:
+              - integer
+              - 'null'
+            mintable:
+              type:
+              - boolean
+              - 'null'
+            pausable:
+              type:
+              - boolean
+              - 'null'
+            blacklist:
+              type:
+              - boolean
+              - 'null'
+            proxy:
+              type:
+              - boolean
+              - 'null'
+            hiddenOwner:
+              type:
+              - boolean
+              - 'null'
+            openSource:
+              type:
+              - boolean
+              - 'null'
+    RiskBlock:
+      type: object
+      description: 'Graded verdict, or an honest refusal to grade (`graded: false`) when the token is too new or under-described — the API never fakes a grade.'
+      properties:
+        graded:
+          type: boolean
+        score:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          maximum: 97
+          description: Safety score, higher is safer. The engine clamps emitted scores to 2–97 (a perfect score is unreachable by design). Null when ungraded.
+        grade:
+          type:
+          - string
+          - 'null'
+          enum:
+          - A+
+          - A
+          - B
+          - C
+          - D
+          - F
+          - null
+          description: Letter grade band over the score (A+ ≥ 90, A ≥ 82, B ≥ 72, C ≥ 60, D ≥ 35, else F).
+        tier:
+          type:
+          - string
+          - 'null'
+          enum:
+          - low
+          - med
+          - high
+          - null
+          description: 'Risk tier: low (A+/A/B), med (C), high (D/F).'
+        verdict:
+          type:
+          - string
+          - 'null'
+          description: Deterministic one-paragraph verdict prose (no LLM involved).
+        knowns:
+          type: array
+          items:
+            type: string
+          description: Verified facts the grade rests on.
+        unknowns:
+          type: array
+          items:
+            type: string
+          description: Checks that could not be verified.
+        notGradedReason:
+          type:
+          - string
+          - 'null'
+          description: Why no grade was emitted (only when graded is false).
   securitySchemes:
     ApiKeyHeader:
       type: apiKey

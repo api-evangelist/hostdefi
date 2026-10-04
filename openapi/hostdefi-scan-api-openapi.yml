@@ -63,20 +63,23 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ScannerError'
-    ScannerNotFound:
-      description: No DEX data found for that address.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ScannerError'
     ScannerTimeout:
       description: Analysis timed out.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ScannerError'
-    ScannerRateLimited:
-      description: Fair-use cap reached (100 free checks/day per IP; resets within 24h).
+    ScannerServerError:
+      description: Server error.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+    ScannerNotFound:
+      description: No DEX data found for that address.
       content:
         application/json:
           schema:
@@ -87,16 +90,23 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/AnalyzeTokenResult'
-    ScannerServerError:
-      description: Server error.
+    ScannerRateLimited:
+      description: Fair-use cap reached (100 free checks/day per IP; resets within 24h).
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              error:
-                type: string
+            $ref: '#/components/schemas/ScannerError'
   schemas:
+    ScannerError:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+          description: Human-readable explanation safe to show end users.
+      required:
+      - error
     AnalyzeTokenResult:
       type: object
       description: 'Free scanner analysis: AI narrative (or deterministic fallback) + market metrics + on-chain contract permission reads.'
@@ -262,16 +272,6 @@ components:
         aiError:
           type: string
           description: Present when the AI narrative fell back to the deterministic analysis (reason string).
-    ScannerError:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-          description: Human-readable explanation safe to show end users.
-      required:
-      - error
   securitySchemes:
     ApiKeyHeader:
       type: apiKey
