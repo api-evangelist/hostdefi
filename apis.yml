@@ -31,7 +31,7 @@ accessModel:
   generated: '2026-09-02'
   method: derived
 created: '2026-08-21'
-modified: '2026-09-03'
+modified: '2026-10-06'
 specificationVersion: '0.23'
 tags:
 - Solana
@@ -136,6 +136,8 @@ apis:
   - type: OpenAPI
     url: openapi/hostdefi-x402-machine-payable-api-openapi.yml
 common:
+- url: https://hostdefi.com/feed.xml
+  type: BlogRSS
 - type: AgenticAccess
   url: agentic-access/hostdefi-agentic-access.yml
 - type: VulnerabilityDisclosure
