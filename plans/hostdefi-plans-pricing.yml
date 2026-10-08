@@ -50,3 +50,46 @@ overage: >-
 purchase: >-
   Keyed plans are bought by sending SOL to the published wallet and redeeming the transaction
   signature at POST /v1/keys (signature burned after one use; key shown once).
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - free
+  - subscription
+  units: []
+  plans:
+  - name: Free
+    access: other
+    model: free
+    model_how: derived
+    units: []
+    periods:
+    - none
+  - name: Builder
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - week
+  - name: Pro
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - month
+  - name: Scale
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - year
+  - name: Agent (x402)
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - other
