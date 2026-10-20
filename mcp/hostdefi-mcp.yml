@@ -205,3 +205,28 @@ x-evidence:
   note: 'Raw tools/list response saved verbatim at mcp/hostdefi-tools-list.json. Grew from 9 tools (2026-08)
     to 15 (2026-09): added token_risk_deep, token_report, wallet_exposure, token_launches, predict_markets,
     predict_history.'
+tool_quality:
+  tool_count: 15
+  tokens_total: 3543
+  tokens_per_tool_median: 230
+  heavy_tools: []
+  heavy_tool_count: 0
+  params_total: 39
+  params_undescribed: 3
+  params_described_pct: 92.3
+  tools_with_undescribed_params: 3
+  tools_annotated: 15
+  annotated_pct: 100.0
+  state_changing_unhinted: []
+  tools_missing_schema: 0
+  short_descriptions: 0
+  duplicate_descriptions: 0
+  duplicate_names: 0
+  nonportable_names: []
+  output_schema_count: 0
+  token_estimate: chars/3.6 of each compact tool definition
+  source: mcp/hostdefi-tools-list.json
+  measured: '2026-10-20'
+  scored: false
+  note: Facts from the saved tools/list capture (mcp_tool_quality.py); recorded, not scored. Checks learned
+    from Glimind's agent-readiness audit.
