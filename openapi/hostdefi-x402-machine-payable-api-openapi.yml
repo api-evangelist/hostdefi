@@ -1527,3 +1527,9 @@ components:
       in: header
       name: x-api-key
       description: API key from POST /v1/keys (vx_ + 32 hex chars). Omit it to use the keyless free tier (100 calls/day per IP).
+x-provenance:
+  method: harvested
+  publisher: HostDeFi
+  source: https://hostdefi.com/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
