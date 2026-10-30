@@ -1,4 +1,4 @@
-# hostdefi
+# HostDeFi
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,4 +64,127 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Non-custodial, multi-chain DEX interface whose developer product is the HostDeFi Token Risk API — an A+-to-F token safety scoring service across Solana and EVM chains. Exposes a keyless REST API, an x402 pay-per-call agent lane with a live discovery manifest, and a hosted MCP server. Composes Jupite
+HostDeFi is a non-custodial Solana token-risk service that scans a mint before a purchase — mint and freeze authority state, liquidity depth and lock status, holder concentration, dangerous Token-2022 extensions, sell simulation and contract flags. The public contract is an OpenAPI 3.1 document of 32 operations served from hostdefi.com/api with API-key authentication. HostDeFi also exposes an x402 machine-payment surface: an authority quick-check endpoint that returns HTTP 402 with a signed payment challenge, priced in USDC and payable on either Solana or Base, so an agent can buy a single check without an account.
+
+**Areas:** Solana · Token Risk · DeFi · rug pull · x402 · A2A
+
+## HostDeFi on APIs.io
+
+Everything profiled for HostDeFi is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/hostdefi/](https://apis.io/providers/hostdefi/)** — or go straight to one of the APIs or properties below.
+
+### APIs (7)
+
+- [HostDeFi Token Risk API](https://apis.io/apis/hostdefi/hostdefi-token-risk-api/) — Token risk scanning for Solana mints — authority state, liquidity, holder concentration, Token-2022 extension flags and sell simulation. 26 operations,…
+- [HostDeFi Analyze Token API](https://apis.io/apis/hostdefi/hostdefi-analyze-token-api/) — The Analyze Token API from HostDeFi — 1 operation(s) for analyze token.
+- [HostDeFi Health API](https://apis.io/apis/hostdefi/hostdefi-health-api/) — The Health API from HostDeFi — 1 operation(s) for health.
+- [HostDeFi Keys API](https://apis.io/apis/hostdefi/hostdefi-keys-api/) — The Keys API from HostDeFi — 1 operation(s) for keys.
+- [HostDeFi Scan API](https://apis.io/apis/hostdefi/hostdefi-scan-api/) — The Scan API from HostDeFi — 1 operation(s) for scan.
+- [HostDeFi Usage API](https://apis.io/apis/hostdefi/hostdefi-usage-api/) — The Usage API from HostDeFi — 1 operation(s) for usage.
+- [HostDeFi x402 (machine-payable) API](https://apis.io/apis/hostdefi/hostdefi-x402-machine-payable-api/) — Pay-per-call lane for AI agents (x402 protocol): no key, no account - pay USDC per request and get the same A+-F Safety Read. Free tier and API-key plans…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (2)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [hostdefi](https://apis.io/servers/hostdefi/hostdefi/)
+- [Moved to /providers/hostdefi/](https://apis.io/servers/hostdefi/hostdefi-tools-list-json/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Hostdefi Agentic Access](https://apis.io/agentic-access/hostdefi/hostdefi-agentic-access/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Hostdefi Token Risk Api Overlay](https://apis.io/overlays/hostdefi/hostdefi-token-risk-api-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Hostdefi Authentication](https://apis.io/security/hostdefi/hostdefi-authentication/)
+- [Hostdefi Domain Security](https://apis.io/security/hostdefi/hostdefi-domain-security/)
+- [Hostdefi Vulnerability Disclosure](https://apis.io/security/hostdefi/hostdefi-vulnerability-disclosure/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Hostdefi Plans Pricing](https://apis.io/plans/hostdefi/hostdefi-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Hostdefi Rate Limits](https://apis.io/rate-limits/hostdefi/hostdefi-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://hostdefi.com)
+- [Pricing](https://hostdefi.com/docs/api/)
+- [Support](https://t.me/hostdefiapps)
+- [Security](https://hostdefi.com/why)
+
+## API Evangelist rating
+
+**Kin Score 44.1** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 51.2 |
+| Contract governance | 4.5 |
+| Operational transparency | 42.1 |
+| Developer ergonomics | 44.6 |
+| Access clarity | 42.1 |
+
+**Agent readiness 46.4** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | conformant |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | paginated |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 22.5** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/hostdefi/](https://apis.io/providers/hostdefi/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for HostDeFi: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/hostdefi/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
